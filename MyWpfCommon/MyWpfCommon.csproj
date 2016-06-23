@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C9A74BDC-0E51-4AF7-8522-AD6617EE0CCF}</ProjectGuid>
+    <OutputType>library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MyWpfCommon</RootNamespace>
+    <AssemblyName>MyWpfCommon</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Elysium, Version=2.0.1042.4, Culture=neutral, PublicKeyToken=afa220db249e5b15, processorArchitecture=MSIL">
+      <HintPath>..\packages\Elysium.Theme.2.0.4\lib\net45\Elysium.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FirstFloor.ModernUI, Version=1.0.9.0, Culture=neutral, PublicKeyToken=bc9b0c37bf06c6a9, processorArchitecture=MSIL">
+      <HintPath>..\packages\ModernUI.WPF.1.0.9\lib\net45\FirstFloor.ModernUI.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MyCommonTypes\TimeSpansRatio.cs" />
+    <Compile Include="MyMiscHelpers\DllSearcher.cs" />
+    <Compile Include="MyMiscHelpers\MyAccessPermissionHelper.cs" />
+    <Compile Include="MyMiscHelpers\MyComHelper.cs" />
+    <Compile Include="MyMiscHelpers\MyDotNetHelper.cs" />
+    <Compile Include="MyMiscHelpers\MyGenericsHelper.cs" />
+    <Compile Include="MyMiscHelpers\MyLogger.cs" />
+    <Compile Include="MyMiscHelpers\MyWin32InteropHelper.cs" />
+    <Compile Include="MyMiscHelpers\MyWin32PInvokeHelper.cs" />
+    <Compile Include="MyMiscHelpers\MyWindowCaptureBuffer.cs" />
+    <Compile Include="MyMiscHelpers\SimpleBytesSharedMemory.cs" />
+    <Compile Include="MyWpfCtrls\BalloonToolTipContent.xaml.cs">
+      <DependentUpon>BalloonToolTipContent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MyWpfCtrls\CustomBehaviors.cs" />
+    <Compile Include="MyWpfCtrls\CustomConverters.cs" />
+    <Compile Include="MyWpfCtrls\EditBox.cs" />
+    <Compile Include="MyWpfCtrls\EditBoxAdorner.cs" />
+    <Compile Include="MyWpfCtrls\MetroIconArrowUp.xaml.cs">
+      <DependentUpon>MetroIconArrowUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MyWpfCtrls\MetroIconAsterisk.xaml.cs">
+      <DependentUpon>MetroIconAsterisk.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MyWpfCtrls\MetroIconCross.xaml.cs">
+      <DependentUpon>MetroIconCross.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MyWpfCtrls\MetroIconHeartbeat.xaml.cs">
+      <DependentUpon>MetroIconHeartbeat.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MyWpfCtrls\MetroIconPlus.xaml.cs">
+      <DependentUpon>MetroIconPlus.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MyWpfCtrls\MetroIconSpeaker.xaml.cs">
+      <DependentUpon>MetroIconSpeaker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MyWpfCtrls\MyCustomScrollViewer.cs" />
+    <Compile Include="MyWpfCtrls\MyProgressWindow.xaml.cs">
+      <DependentUpon>MyProgressWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MyWpfCtrls\MyProgressWindowBase.cs" />
+    <Compile Include="MyWpfCtrls\MyModernProgressWindow.xaml.cs">
+      <DependentUpon>MyModernProgressWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MyWpfHelpers\MyModernDialogHack.cs" />
+    <Compile Include="MyWpfHelpers\MyModernWindowHack.cs" />
+    <Compile Include="MyWpfHelpers\MyWpfBindingHelper.cs" />
+    <Compile Include="MyWpfHelpers\MyWpfControlHelper.cs" />
+    <Compile Include="MyWpfHelpers\MyWpfMiscHelper.cs" />
+    <Compile Include="MyWpfShapes\CenteredCross.cs" />
+    <Compile Include="MyWpfShapes\CenteredEllipse.cs" />
+    <Compile Include="MyWpfShapes\CenteredPie.cs" />
+    <Compile Include="MyXmlSerializables\XTimeSpan.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="MyWpfCtrls\BalloonToolTipContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MyWpfCtrls\MetroIconArrowUp.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MyWpfCtrls\MetroIconAsterisk.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MyWpfCtrls\MetroIconCross.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MyWpfCtrls\MetroIconHeartbeat.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MyWpfCtrls\MetroIconPlus.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MyWpfCtrls\MetroIconSpeaker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MyWpfCtrls\MyProgressWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MyWpfCtrls\MyModernProgressWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\CaptionButtonStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\ElysiumAppend.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\MuiExpanderStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\MyIconResDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\MyWpfCommon.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\PartialModernUIIcons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\RedTextButtonStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\SlideSwitchCheckBoxStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\ToggleRadioButtonStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Elysium_license.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Images\Annotation_Error_24.png" />
+    <Resource Include="Images\Annotation_Help_24.png" />
+    <Resource Include="Images\Annotation_Info_24.png" />
+    <Resource Include="Images\Annotation_Warning_24.png" />
+    <None Include="Images\Annotate_Error.ico" />
+    <None Include="Images\Annotate_Help.ico" />
+    <None Include="Images\Annotate_Info.ico" />
+    <None Include="Images\Annotate_Warning.ico" />
+    <Content Include="ModernUIIcons_license.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="MUI4WPF_license.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

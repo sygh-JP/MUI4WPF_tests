@@ -1,0 +1,47 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{F79E891B-3A4F-4FF0-8ED4-5EC987167424}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elysium2_DotNet4_5", "Elysium2_DotNet4_5", "{4EB663F3-44D0-4936-8FB3-508649EEDFD8}"
+	ProjectSection(SolutionItems) = preProject
+		Elysium2_DotNet4_5\Elysium.dll = Elysium2_DotNet4_5\Elysium.dll
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ModernUI4WPF_DotNet4_5", "ModernUI4WPF_DotNet4_5", "{1E42DEA8-C19B-408F-8535-FDE883B7D5E7}"
+	ProjectSection(SolutionItems) = preProject
+		ModernUI4WPF_DotNet4_5\FirstFloor.ModernUI.dll = ModernUI4WPF_DotNet4_5\FirstFloor.ModernUI.dll
+		ModernUI4WPF_DotNet4_5\FirstFloor.ModernUI.XML = ModernUI4WPF_DotNet4_5\FirstFloor.ModernUI.XML
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyWpfCommon", "MyWpfCommon\MyWpfCommon.csproj", "{C9A74BDC-0E51-4AF7-8522-AD6617EE0CCF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModernUIApp1", "ModernUIApp1\ModernUIApp1.csproj", "{B0DC0DCD-3042-4359-A0E7-70A382CF894A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9A74BDC-0E51-4AF7-8522-AD6617EE0CCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9A74BDC-0E51-4AF7-8522-AD6617EE0CCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9A74BDC-0E51-4AF7-8522-AD6617EE0CCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9A74BDC-0E51-4AF7-8522-AD6617EE0CCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0DC0DCD-3042-4359-A0E7-70A382CF894A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0DC0DCD-3042-4359-A0E7-70A382CF894A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0DC0DCD-3042-4359-A0E7-70A382CF894A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0DC0DCD-3042-4359-A0E7-70A382CF894A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4EB663F3-44D0-4936-8FB3-508649EEDFD8} = {F79E891B-3A4F-4FF0-8ED4-5EC987167424}
+		{1E42DEA8-C19B-408F-8535-FDE883B7D5E7} = {F79E891B-3A4F-4FF0-8ED4-5EC987167424}
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+EndGlobal

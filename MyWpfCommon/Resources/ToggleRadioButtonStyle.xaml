@@ -1,0 +1,53 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    >
+    <!-- 外観だけ ToggleButton をベースとし、動作およびオブジェクトの型は RadioButton/CheckBox に準ずるようなスタイルを定義する。 -->
+    <!-- x:Key を指定しない場合、新たな暗黙スタイルとなる。 -->
+    <Style x:Key="ToggleRadioButtonStyleKey" TargetType="RadioButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+        <Style.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsChecked" Value="True"/>
+                    <Condition Property="IsMouseOver" Value="False"/>
+                </MultiTrigger.Conditions>
+                <!--
+                こちらは印象がちょっとキツい感じになる。
+                <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPressed}"/>
+                -->
+                <!-- チェックされたトグル ボタンの色は、若干薄め（半透明）がよさげ。 -->
+                <Setter Property="Background" Value="{DynamicResource WindowBorder}"/>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsChecked" Value="True"/>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="{DynamicResource ButtonBackgroundHover}"/>
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="ToggleCheckBoxStyleKey" TargetType="CheckBox" BasedOn="{StaticResource {x:Type ToggleButton}}">
+        <Style.Setters>
+            <Setter Property="BorderBrush" Value="DarkGray"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style.Setters>
+        <Style.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsChecked" Value="True"/>
+                    <Condition Property="IsMouseOver" Value="False"/>
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="{DynamicResource WindowBorder}"/>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsChecked" Value="True"/>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="{DynamicResource ButtonBackgroundHover}"/>
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

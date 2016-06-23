@@ -1,0 +1,74 @@
+﻿<myctrls:MyProgressWindowBase
+    x:Class="MyWpfCtrls.MyModernProgressWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:myctrls="clr-namespace:MyWpfCtrls"
+    mc:Ignorable="d"
+    WindowStyle="SingleBorderWindow"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    Width="400" Height="220"
+    WindowStartupLocation="CenterOwner"
+    >
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0"
+                      ResizeBorderThickness="0" />
+    </WindowChrome.WindowChrome>
+    <!--
+    WindowStyle を None に設定するときは、Background, AllowsTransparency もレイヤード ウィンドウ設定にしておかないと、表示する際にちらつく。
+    しかしレイヤード ウィンドウにすると、今度はフラッシュ（Flash、ウィンドウ外をクリックしたときの点滅表示）や Aero の影がなくなる。
+    WindowStyle は SingleBorderWindow にして、カスタムの WindowChrome を使うとよさげ。
+    ちなみに WindowChrome の CaptionHeight を非ゼロにすると、システム メニューを表示できてしまう。
+    ウィンドウの移動は UIElement.MouseLeftButtonDown と Window.DragMove() で代替するほうがよさげ。
+    -->
+
+    <!-- Window の BorderThickness はゼロにしておいて、BorderBrush をバインディングするのがミソ。 -->
+
+    <Window.Style>
+        <Style TargetType="Window" BasedOn="{StaticResource {x:Type Window}}">
+            <Style.Triggers>
+                <Trigger Property="IsActive" Value="True">
+                    <Setter Property="BorderBrush" Value="{DynamicResource ResourceKey=WindowBorderActive}"/>
+                </Trigger>
+                <Trigger Property="IsActive" Value="False">
+                    <Setter Property="BorderBrush" Value="{DynamicResource ResourceKey=WindowBorder}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Style>
+
+    <!--
+    仮にウィンドウの影を OFF にした状態でも一応ウィンドウの重なり具合が分かるように、はっきりとしたボーダーを付けておく。
+    Windows 8 では Windows 7 以前と比べてウィンドウの影がかなり薄いので、その対策でもある。
+    もともと Modern UI はウィンドウの重なりや立体感を使わないポリシーのデザインなので仕方ないといえば仕方ないのだが……
+    -->
+    <Border BorderThickness="2" BorderBrush="DarkGray" Background="{DynamicResource ResourceKey=WindowBackground}">
+        <Border BorderThickness="2" BorderBrush="{Binding Path=BorderBrush, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}">
+            <Grid>
+                <TextBlock VerticalAlignment="Top" Padding="12,8"
+                       FontWeight="Bold"
+                       Foreground="White"
+                       Background="{DynamicResource ResourceKey=WindowBorderActive}"
+                       Text="{Binding Path=Title, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"/>
+                <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+                    <TextBlock Name="textblockDescription" Margin="12" TextWrapping="Wrap" Text="{Binding Path=Description}" Foreground="{DynamicResource ResourceKey=WindowText}"/>
+                    <ProgressBar Name="progressMain" Margin="12" Height="20" KeyboardNavigation.TabNavigation="None" IsIndeterminate="{Binding Path=IsIndeterminate}" Value="{Binding Path=ProgressValue}"/>
+                </StackPanel>
+                <!-- ローカライズされたテキストにかかわらず、停止ボタンは必ず一定以上のサイズを確保する。 -->
+                <!--
+                Enter キーを連打してしまった場合に Stop してしまわないようにするため、IsDefault は True にしないが、
+                Esc キーで緊急停止することはできるようにするため、IsCancel は True にしておく。
+                -->
+                <Button Name="buttonStop" Content="Stop"
+                        MinWidth="100" Padding="10,4"
+                        BorderBrush="DarkGray" BorderThickness="2"
+                        HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="12"
+                        IsCancel="True"
+                        Visibility="{Binding Path=StopButtonVisibility}"
+                        Command="{Binding Path=StopCommand}"/>
+            </Grid>
+        </Border>
+    </Border>
+</myctrls:MyProgressWindowBase>

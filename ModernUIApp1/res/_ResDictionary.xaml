@@ -1,0 +1,15 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernUIApp1"
+    xmlns:myconvs="clr-namespace:MyWpfConverters;assembly=MyWpfCommon"
+    >
+    <!-- 再利用するコンバーターを定義。検索しやすさを考慮して、あえてクラス名とキー名を同じにする。 -->
+    <myconvs:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+    <myconvs:HalfDoubleConverter x:Key="HalfDoubleConverter"/>
+    <myconvs:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
+    <myconvs:NullableBooleanVisibilityConverter x:Key="NullableBooleanVisibilityConverter"/>
+    <myconvs:TextFocusVisibilityConverter x:Key="TextFocusVisibilityConverter"/>
+    <myconvs:Double4XYWidthHeightToRectConverter x:Key="Double4XYWidthHeightToRectConverter"/>
+    <myconvs:Double4CenterXYRadiusXYToRectConverter x:Key="Double4CenterXYRadiusXYToRectConverter"/>
+</ResourceDictionary>

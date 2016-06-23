@@ -1,0 +1,27 @@
+﻿<myctrls:MyProgressWindowBase
+    x:Class="MyWpfCtrls.MyProgressWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:myctrls="clr-namespace:MyWpfCtrls"
+    Title="Progress Window"
+    WindowStyle="SingleBorderWindow"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    Width="400" Height="220"
+    WindowStartupLocation="CenterOwner"
+    >
+    <Grid>
+        <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+            <TextBlock Name="textblockDescription" Margin="12" TextWrapping="Wrap" Text="{Binding Path=Description}"/>
+            <ProgressBar Name="progressMain" Margin="12" Height="20" IsIndeterminate="{Binding Path=IsIndeterminate}" Value="{Binding Path=ProgressValue}"/>
+        </StackPanel>
+        <!-- ローカライズされたテキストにかかわらず、停止ボタンは必ず一定以上のサイズを確保する。 -->
+        <Button Name="buttonStop" Content="Stop"
+                MinWidth="100" Padding="10,4"
+                BorderBrush="DarkGray" BorderThickness="2"
+                HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="12"
+                IsCancel="True"
+                Visibility="{Binding Path=StopButtonVisibility}"
+                Command="{Binding Path=StopCommand}"/>
+    </Grid>
+</myctrls:MyProgressWindowBase>

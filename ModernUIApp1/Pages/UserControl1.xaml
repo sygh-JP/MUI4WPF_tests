@@ -1,0 +1,52 @@
+﻿<UserControl
+    x:Class="ModernUIApp1.Pages.UserControl1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    mc:Ignorable="d" 
+    d:DesignWidth="300"
+    d:DesignHeight="300"
+    Background="{DynamicResource ResourceKey=WindowBackground}"
+    >
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="menu1"/>
+            <MenuItem Header="menu2"/>
+            <MenuItem Header="menu3"/>
+        </ContextMenu>
+    </UserControl.ContextMenu>
+
+    <!-- ローカライズ用のリソースを定義して XAML で参照する場合、[アクセス修飾子]を Internal ではなく Public にすること。 -->
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock TextWrapping="Wrap" FontSize="14">
+            This is my user-control as a page in <Bold>Modern UI for WPF</Bold> app.
+        </TextBlock>
+        <Expander Grid.Row="4" Header="Expander" ExpandDirection="Down" IsExpanded="True" Foreground="{DynamicResource ItemText}">
+            <StackPanel Orientation="Vertical" Margin="10,2">
+                <Label Content="Context menu comparison test:"/>
+                <TextBox Width="200" HorizontalAlignment="Left" Text="default"/>
+                <Separator Height="5" Visibility="Hidden"/>
+                <TextBox Width="200" HorizontalAlignment="Left" Text="modern" ContextMenu="{StaticResource StandardTextBoxContextMenuKey}"/>
+                <Separator Height="5" Visibility="Hidden"/>
+                <TextBox Width="200" HorizontalAlignment="Left" Text="elysium" ContextMenu="{StaticResource ElysiumTextBoxContextMenuKey}"/>
+            </StackPanel>
+        </Expander>
+
+        <!-- MUI4WPF には ModernTab が用意されているので、そちらを使ったほうが全体の統一感が出るが、従来の TabControl とは使い勝手が異なる。 -->
+        <TabControl Grid.Row="6" HorizontalAlignment="Left">
+            <TabItem Header="tab1">hoge</TabItem>
+            <TabItem Header="tab2">fuga</TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

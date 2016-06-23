@@ -1,0 +1,183 @@
+﻿<UserControl
+    x:Class="ModernUIApp1.Pages.Home"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+    mc:Ignorable="d" 
+    d:DesignWidth="500"
+    d:DesignHeight="500"
+    Background="{DynamicResource ResourceKey=WindowBackground}"
+    Loaded="UserControl_Loaded"
+    >
+    <!--
+    MUI4WPF の CheckBox で中間状態（IsThreeState="True", IsChecked="{x:Null}"）にすると、なぜか Foreground に Disabled 状態のものが使われる。
+    MUI4WPF の RadioButton はなぜか矩形デザイン。Elysium のほうがよい。
+    http://www.usability.gr.jp/alertbox/20040927.html
+    ToggleButton に関しては、Elysium のものはまだマシだが（Background の色が、IsChecked="False" でテーマ色、IsChecked="True" でダークグレーになる）、
+    MUI4WPF のは完全にアウト（IsChecked で外観が変化しない）。
+    ちなみに WPF の ToggleButton には GroupName プロパティがないので、Win32/MFC の PushLike ラジオ ボタンのような使い方は直接できない。
+    RadioButton の外観を ToggleButton に変更し、さらに IsChecked に応じて Background を制御するような Style を作成して適用したほうがよい。
+    そもそも WPF では ToggleButton 自体を直接使わないほうがよい。
+    なお、WPF 4.5 の Aero2/AeroLite テーマにもいろいろと細かなカスタマイズ性に関する問題がある。
+    例えば Aero2 では ComboBox の Background 指定が効かない、AeroLite では TreeViewItem の選択時ハイライト色指定が無意味、など。
+    また、Windows 7 上での AeroLite は、TextBox や ComboBox のコンテキスト メニューの外観が Aero のままで、さらにマウスオーバー時のメニュー項目のハイライトがなくなる。
+    Aero ではこれらの問題は存在しない。
+    -->
+    <UserControl.Resources>
+        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="ContextMenu" Value="{StaticResource StandardTextBoxContextMenuKey}" />
+            <!--
+            <Setter Property="RenderOptions.ClearTypeHint" Value="Enabled"/>
+            <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+            <Setter Property="TextOptions.TextHintingMode" Value="Animated"/>
+            -->
+        </Style>
+    </UserControl.Resources>
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="menu1"/>
+            <MenuItem Header="menu2"/>
+            <MenuItem Header="menu3"/>
+        </ContextMenu>
+    </UserControl.ContextMenu>
+
+    <Grid Style="{StaticResource ContentRoot}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <ScrollViewer Grid.Row="0" Visibility="Visible" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible">
+            <StackPanel>
+                <TextBlock Text="TODO: add content" />
+                <Rectangle RadiusX="8" RadiusY="8" Fill="{DynamicResource WindowBorderActive}" Width="800" Height="200" />
+            </StackPanel>
+        </ScrollViewer>
+        <ProgressBar Grid.Row="1" Name="progressMain" Margin="4" IsIndeterminate="True"/>
+        <UniformGrid Grid.Row="2">
+            <StackPanel Margin="4">
+                <CheckBox Name="check1" Content="check1" IsChecked="True"/>
+                <CheckBox Name="check2" Content="check2" IsChecked="{x:Null}" IsThreeState="True"/>
+                <CheckBox Name="echeck1" Content="Elysium check1" Foreground="{DynamicResource WindowText}" IsChecked="{Binding ElementName=check1, Path=IsChecked}">
+                    <CheckBox.Resources>
+                        <ResourceDictionary Source="/Elysium;component/Themes/Generic.xaml"/>
+                    </CheckBox.Resources>
+                </CheckBox>
+                <CheckBox Name="echeck2" Content="Elysium check2" Foreground="{DynamicResource WindowText}" IsChecked="{Binding ElementName=check2, Path=IsChecked}" IsThreeState="True">
+                    <CheckBox.Resources>
+                        <ResourceDictionary Source="/Elysium;component/Themes/Generic.xaml"/>
+                    </CheckBox.Resources>
+                </CheckBox>
+            </StackPanel>
+            <GroupBox Header="Radio Buttons" Margin="4">
+                <StackPanel>
+                    <RadioButton Name="radio1" Content="radio1" IsChecked="True"/>
+                    <RadioButton Name="radio2" Content="radio2"/>
+                    <RadioButton Name="radio3" Content="radio3"/>
+                </StackPanel>
+            </GroupBox>
+            <StackPanel Margin="4">
+                <!--
+                MUI4WPF テーマの変更に合わせて Elysium のカラーも動的に変える場合、StaticResource では不可。DynamicResource を使う。
+                https://mui.codeplex.com/wikipage?title=Theme%20resource%20reference&referringTitle=Documentation
+                -->
+                <RadioButton Name="eradio1" Content="Elysium radio1" Foreground="{DynamicResource WindowText}" IsChecked="True">
+                    <RadioButton.Resources>
+                        <ResourceDictionary Source="/Elysium;component/Themes/Generic.xaml"/>
+                    </RadioButton.Resources>
+                </RadioButton>
+                <RadioButton Name="eradio2" Content="Elysium radio2" Foreground="{DynamicResource WindowText}">
+                    <RadioButton.Resources>
+                        <ResourceDictionary Source="/Elysium;component/Themes/Generic.xaml"/>
+                    </RadioButton.Resources>
+                </RadioButton>
+                <ToggleButton Name="etoggle1" Content="Elysium toggle1" IsChecked="True">
+                    <ToggleButton.Resources>
+                        <ResourceDictionary Source="/Elysium;component/Themes/Generic.xaml"/>
+                    </ToggleButton.Resources>
+                </ToggleButton>
+                <ToggleButton Name="etoggle2" Content="Elysium toggle2" IsChecked="False">
+                    <ToggleButton.Resources>
+                        <ResourceDictionary Source="/Elysium;component/Themes/Generic.xaml"/>
+                    </ToggleButton.Resources>
+                </ToggleButton>
+            </StackPanel>
+            <StackPanel Margin="4">
+                <!--
+                MUI4WPF のボタンをマージンなしで並べると、特に Dark テーマのときに各要素がすべてくっついて見えるという欠陥がある。
+                ボタンとエディット ボックスの区別もテキストのアライメントの違いしかないので、
+                ボタンはボーダーの色と太さを明示的に指定して、区別できるようにしたほうがよい。
+                -->
+                <Button Name="button1" Content="button1"/>
+                <Button Name="button2" Content="button2"/>
+                <Button Name="button3" Content="button3"/>
+                <Button Name="button4" Content="button4"/>
+            </StackPanel>
+            <StackPanel Margin="4">
+                <ToggleButton Name="toggle1" Content="toggle1" IsChecked="False"/>
+                <ToggleButton Name="toggle2" Content="toggle2" IsChecked="True"/>
+                <RadioButton Name="tradio1" Content="tgl-radio1" Style="{StaticResource ToggleRadioButtonStyleKey}" IsChecked="True"/>
+                <RadioButton Name="tradio2" Content="tgl-radio2" Style="{StaticResource ToggleRadioButtonStyleKey}"/>
+            </StackPanel>
+            <StackPanel Margin="4">
+                <!-- アイコンのジオメトリを付けないと一見ラジオ ボタンに見える。 -->
+                <mui:ModernButton Name="mbutton1" IconData="" VerticalAlignment="Bottom" Content="modern button1" Background="Red" BorderThickness="1" BorderBrush="Gray"/>
+                <mui:ModernButton Name="mbutton2" IconData="" VerticalAlignment="Bottom" Content="modern button2" Background="Red" BorderThickness="1" BorderBrush="Gray"/>
+            </StackPanel>
+            <Grid Margin="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="3"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="4"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Row="0" Grid.Column="0" Content="label1:" VerticalAlignment="Center"/>
+                <Grid Grid.Row="0" Grid.Column="2">
+                    <!--
+                    MUI4WPF のテーマをそのまま活かすため、カスタム コントロールや添付ビヘイビアなどではなく
+                    ただの重ね合わせとバインディングで実装する。
+                    なお、プレースホルダーはどうしても必要な場面以外では避けるべし。
+                    http://www.usability.gr.jp/alertbox/form-design-placeholders.html
+                    -->
+                    <TextBox Name="textbox1" Text="text1"/>
+                    <!-- Placeholder (Watermark) -->
+                    <TextBlock Text="Enter your name." Foreground="DarkGray" Margin="4,0" HorizontalAlignment="Left" VerticalAlignment="Center" IsHitTestVisible="False">
+                        <TextBlock.Visibility>
+                            <MultiBinding Converter="{StaticResource TextFocusVisibilityConverter}">
+                                <Binding ElementName="textbox1" Path="Text.IsEmpty" />
+                                <Binding ElementName="textbox1" Path="IsFocused" />
+                            </MultiBinding>
+                        </TextBlock.Visibility>
+                    </TextBlock>
+                </Grid>
+                <Label Grid.Row="2" Grid.Column="0" Content="label2:" VerticalAlignment="Center"/>
+                <ComboBox Grid.Row="2" Grid.Column="2" Text="combo1" IsEditable="True" MaxDropDownHeight="100">
+                    <ComboBoxItem Content="item1"/>
+                    <ComboBoxItem Content="item2"/>
+                    <ComboBoxItem Content="item3"/>
+                    <ComboBoxItem Content="item4"/>
+                    <ComboBoxItem Content="item5"/>
+                    <ComboBoxItem Content="item6"/>
+                    <ComboBoxItem Content="item7"/>
+                    <ComboBoxItem Content="item8"/>
+                </ComboBox>
+            </Grid>
+            <StackPanel Margin="4">
+                <Slider />
+                <ScrollBar Orientation="Horizontal" Minimum="0" Maximum="100" ViewportSize="20" LargeChange="10" SmallChange="1"/>
+            </StackPanel>
+            <StackPanel Margin="4">
+                <CheckBox Content="Slide-switch check1" IsChecked="True" Style="{StaticResource SlideSwitchCheckBoxStyle1Key}"/>
+                <CheckBox Content="Slide-switch check2" IsChecked="False" Style="{StaticResource SlideSwitchCheckBoxStyle1Key}"/>
+                <CheckBox Content="Slide-switch check3" IsChecked="{x:Null}" Style="{StaticResource SlideSwitchCheckBoxStyle1Key}"/>
+            </StackPanel>
+        </UniformGrid>
+    </Grid>
+</UserControl>
