@@ -40,7 +40,6 @@ namespace ModernUIApp1.Pages
 			{
 				if (e.Key == Key.Enter)
 				{
-					MyWpfCtrls.BalloonToolTipContent.IsModernStyle = (this.check1.IsChecked == true);
 					if (this.textbox1.Text.StartsWith("I", StringComparison.OrdinalIgnoreCase))
 					{
 						this._balloonToolTipProxy.SetIconImage(MessageBoxImage.Information);

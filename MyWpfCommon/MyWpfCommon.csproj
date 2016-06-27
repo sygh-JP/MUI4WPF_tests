@@ -58,43 +58,14 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MyCommonTypes\TimeSpansRatio.cs" />
-    <Compile Include="MyMiscHelpers\DllSearcher.cs" />
-    <Compile Include="MyMiscHelpers\MyAccessPermissionHelper.cs" />
-    <Compile Include="MyMiscHelpers\MyComHelper.cs" />
-    <Compile Include="MyMiscHelpers\MyDotNetHelper.cs" />
     <Compile Include="MyMiscHelpers\MyGenericsHelper.cs" />
-    <Compile Include="MyMiscHelpers\MyLogger.cs" />
     <Compile Include="MyMiscHelpers\MyWin32InteropHelper.cs" />
     <Compile Include="MyMiscHelpers\MyWin32PInvokeHelper.cs" />
-    <Compile Include="MyMiscHelpers\MyWindowCaptureBuffer.cs" />
-    <Compile Include="MyMiscHelpers\SimpleBytesSharedMemory.cs" />
     <Compile Include="MyWpfCtrls\BalloonToolTipContent.xaml.cs">
       <DependentUpon>BalloonToolTipContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="MyWpfCtrls\CustomBehaviors.cs" />
     <Compile Include="MyWpfCtrls\CustomConverters.cs" />
-    <Compile Include="MyWpfCtrls\EditBox.cs" />
-    <Compile Include="MyWpfCtrls\EditBoxAdorner.cs" />
-    <Compile Include="MyWpfCtrls\MetroIconArrowUp.xaml.cs">
-      <DependentUpon>MetroIconArrowUp.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MyWpfCtrls\MetroIconAsterisk.xaml.cs">
-      <DependentUpon>MetroIconAsterisk.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MyWpfCtrls\MetroIconCross.xaml.cs">
-      <DependentUpon>MetroIconCross.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MyWpfCtrls\MetroIconHeartbeat.xaml.cs">
-      <DependentUpon>MetroIconHeartbeat.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MyWpfCtrls\MetroIconPlus.xaml.cs">
-      <DependentUpon>MetroIconPlus.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MyWpfCtrls\MetroIconSpeaker.xaml.cs">
-      <DependentUpon>MetroIconSpeaker.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MyWpfCtrls\MyCustomScrollViewer.cs" />
     <Compile Include="MyWpfCtrls\MyProgressWindow.xaml.cs">
       <DependentUpon>MyProgressWindow.xaml</DependentUpon>
     </Compile>
@@ -107,10 +78,6 @@
     <Compile Include="MyWpfHelpers\MyWpfBindingHelper.cs" />
     <Compile Include="MyWpfHelpers\MyWpfControlHelper.cs" />
     <Compile Include="MyWpfHelpers\MyWpfMiscHelper.cs" />
-    <Compile Include="MyWpfShapes\CenteredCross.cs" />
-    <Compile Include="MyWpfShapes\CenteredEllipse.cs" />
-    <Compile Include="MyWpfShapes\CenteredPie.cs" />
-    <Compile Include="MyXmlSerializables\XTimeSpan.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -140,39 +107,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="MyWpfCtrls\MetroIconArrowUp.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="MyWpfCtrls\MetroIconAsterisk.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="MyWpfCtrls\MetroIconCross.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="MyWpfCtrls\MetroIconHeartbeat.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="MyWpfCtrls\MetroIconPlus.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="MyWpfCtrls\MetroIconSpeaker.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MyWpfCtrls\MyProgressWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MyWpfCtrls\MyModernProgressWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resources\CaptionButtonStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -188,15 +127,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Resources\MyWpfCommon.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Resources\PartialModernUIIcons.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resources\RedTextButtonStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -208,19 +139,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Resources\MyCustomConverters.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Elysium_license.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Images\Annotation_Error_24.png" />
-    <Resource Include="Images\Annotation_Help_24.png" />
-    <Resource Include="Images\Annotation_Info_24.png" />
-    <Resource Include="Images\Annotation_Warning_24.png" />
-    <None Include="Images\Annotate_Error.ico" />
-    <None Include="Images\Annotate_Help.ico" />
-    <None Include="Images\Annotate_Info.ico" />
-    <None Include="Images\Annotate_Warning.ico" />
     <Content Include="ModernUIIcons_license.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

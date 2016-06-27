@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("WPF Common Utility Library")]
 [assembly: AssemblyDescription("WPF Common Utility Library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("NC")]
+[assembly: AssemblyCompany("sygh")]
 [assembly: AssemblyProduct("MyWpfCommon")]
-[assembly: AssemblyCopyright("Copyright (C) NC 2014")]
+[assembly: AssemblyCopyright("Copyright (C) sygh 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

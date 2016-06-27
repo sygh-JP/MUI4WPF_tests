@@ -11,12 +11,10 @@
                 <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/ModernUI.Light.xaml"/>
                 <ResourceDictionary Source="/MyWpfCommon;component/Resources/PartialModernUIIcons.xaml"/>
                 <ResourceDictionary Source="/MyWpfCommon;component/Resources/ElysiumAppend.xaml"/>
-                <ResourceDictionary Source="/MyWpfCommon;component/Resources/CaptionButtonStyle.xaml"/>
-                <ResourceDictionary Source="/MyWpfCommon;component/Resources/ToggleRadioButtonStyle.xaml"/>
-                <ResourceDictionary Source="/MyWpfCommon;component/Resources/RedTextButtonStyle.xaml"/>
                 <ResourceDictionary Source="/MyWpfCommon;component/Resources/MuiExpanderStyle.xaml"/>
+                <ResourceDictionary Source="/MyWpfCommon;component/Resources/MyCustomConverters.xaml"/>
                 <ResourceDictionary Source="/MyWpfCommon;component/Resources/SlideSwitchCheckBoxStyle.xaml"/>
-                <ResourceDictionary Source="res/_ResDictionary.xaml"/>
+                <ResourceDictionary Source="/MyWpfCommon;component/Resources/ToggleRadioButtonStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

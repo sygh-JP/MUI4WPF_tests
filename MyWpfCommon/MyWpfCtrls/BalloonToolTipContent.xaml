@@ -19,10 +19,6 @@
         </Grid.ColumnDefinitions>
         <!-- アイコンがない場合にも余白を持たせる。 -->
         <Grid Grid.Row="0" Grid.Column="0" Width="26" Height="26" Name="gridIconArea">
-            <Image Name="imageIcon" Visibility="Collapsed"
-                   Width="24" Height="24"
-                   UseLayoutRounding="True" SnapsToDevicePixels="True"
-                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <Path Name="pathIcon" Visibility="Collapsed"
                   Width="76" Height="76"
                   HorizontalAlignment="Center" VerticalAlignment="Center">
