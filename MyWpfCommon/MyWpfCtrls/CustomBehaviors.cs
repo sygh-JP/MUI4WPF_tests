@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace MyWpfBehaviors
@@ -9,7 +11,7 @@ namespace MyWpfBehaviors
 	// 添付ビヘイビアは対象コントロールの寿命に注意すること。所詮イベント ハンドラーの追加を自動化しているだけなので、
 	// 動的に生成・破棄する要素に対して安易に添付ビヘイビアを付与すると、イベント ハンドラーのデリゲートが GC 回収対象にならないこともある。
 
-
+#if false
 	/// <summary>
 	/// TextBox がフォーカスを受け取ったときに、テキストを全選択する添付ビヘイビア。
 	/// </summary>
@@ -59,6 +61,107 @@ namespace MyWpfBehaviors
 		}
 	}
 
+#else
+
+	// WPF の TextBox や PasswordBox は、Win32 や HTML フォームとは違ってキーボード フォーカスを受け取っても全選択にならない。
+	// それを解消するための添付ビヘイビア。
+	// ただし、Win32 や HTML フォームのテキスト ボックスでは、Tab キーでフォーカスすると全選択になるが、
+	// マウスによるフォーカスの場合は全選択にならないという仕様がある。
+	// 一方で、Web ブラウザーのアドレス バーなどは、Tab キーでもマウスでも全選択になる。
+	// 前者に合わせる場合、GotFocus あるいは GotKeyboardFocus イベントのみを使えばなんとかなる……と思っていたが、
+	// 一瞬だけ全選択・ハイライトされるなどの現象が出て、あまり見た目がきれいな動作ではなく、結局 Win32 互換ではないし、
+	// またときどき全選択が残ったままになることもあるので、
+	// PreviewMouseLeftButtonDown イベントも使い、後者に合わせることにする。
+	// ちなみにコンボ ボックスは Win32 も WPF も、Tab キーでもマウスでも全選択になる。
+
+	/// <summary>
+	/// TextBoxBase あるいは PasswordBox がフォーカスを受け取ったときに、テキストを全選択する添付ビヘイビア。
+	/// </summary>
+	public static class TextBoxSelectsAllOnGotFocusBehavior
+	{
+		public static readonly DependencyProperty SelectsAllOnGetFocusProperty =
+			DependencyProperty.RegisterAttached(
+				"SelectsAllOnGotFocus",
+				typeof(bool),
+				typeof(TextBoxSelectsAllOnGotFocusBehavior),
+				new UIPropertyMetadata(OnPropertyChanged)
+			);
+
+		public static bool GetSelectsAllOnGotFocus(DependencyObject obj)
+		{
+			return (bool)obj.GetValue(SelectsAllOnGetFocusProperty);
+		}
+
+		public static void SetSelectsAllOnGotFocus(DependencyObject obj, bool value)
+		{
+			obj.SetValue(SelectsAllOnGetFocusProperty, value);
+		}
+
+		private static void OnPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+		{
+			// as 演算子で変換して null 判定する方法だと、XAML 上で TextBoxBase 派生クラス以外の要素にも適用可能（意味はないが）。
+			// キャストで変換して失敗時に例外を発生させる方法だと、XAML 上で TextBoxBase 派生クラス以外の要素には適用できない。
+
+			if (!(sender is TextBoxBase) && !(sender is PasswordBox)) { return; }
+
+			var textBox = sender as UIElement;
+			if (textBox == null) { return; }
+
+			var newValue = (bool)e.NewValue;
+			var oldValue = (bool)e.OldValue;
+			if (oldValue != newValue)
+			{
+				//textBox.GotFocus -= textBox_GotFocus;
+				textBox.GotKeyboardFocus -= textBox_GotKeyboardFocus;
+				textBox.PreviewMouseLeftButtonDown -= textBox_PreviewMouseLeftButtonDown;
+				if (newValue)
+				{
+					//textBox.GotFocus += textBox_GotFocus;
+					textBox.GotKeyboardFocus += textBox_GotKeyboardFocus;
+					textBox.PreviewMouseLeftButtonDown += textBox_PreviewMouseLeftButtonDown;
+				}
+			}
+		}
+
+		private static void textBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+		{
+			// ジェネリクスはテンプレートとは違うのでこの場面では使えない。C# 4.0 以降の dynamic だと動的ダック タイピングできるが、今回は使わない。
+
+			if (sender is TextBoxBase)
+			{
+				((TextBoxBase)sender).SelectAll();
+			}
+			else if (sender is PasswordBox)
+			{
+				((PasswordBox)sender).SelectAll();
+			}
+		}
+
+		private static void textBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			var textBox = sender as UIElement;
+			if (textBox == null) { return; }
+
+			if (!textBox.IsKeyboardFocused)
+			{
+				textBox.Focus();
+				e.Handled = true;
+			}
+		}
+
+		private static void textBox_GotFocus(object sender, RoutedEventArgs e)
+		{
+			if (sender is TextBoxBase)
+			{
+				((TextBoxBase)sender).SelectAll();
+			}
+			else if (sender is PasswordBox)
+			{
+				((PasswordBox)sender).SelectAll();
+			}
+		}
+	}
+#endif
 
 	/// <summary>
 	/// TextBox での Enter キー押下時にバインディング ソースを自動更新する添付ビヘイビア。
@@ -69,7 +172,7 @@ namespace MyWpfBehaviors
 			DependencyProperty.RegisterAttached(
 				"UpdatesBindingSourceOnEnterKeyDown",
 				typeof(bool),
-				typeof(TextBoxSelectsAllOnGotFocusBehavior),
+				typeof(TextBoxUpdatesBindingSourceOnEnterKeyDownBehavior),
 				new UIPropertyMetadata(false, UpdatesBindingSourceOnEnterKeyDownChanged)
 			);
 
@@ -118,7 +221,7 @@ namespace MyWpfBehaviors
 		}
 	}
 
-
+#if false
 	/// <summary>
 	/// Watermark を実現する添付ビヘイビア。
 	/// </summary>
@@ -230,7 +333,7 @@ namespace MyWpfBehaviors
 			return textBox.GetValue(PlaceholderTextProperty) as string;
 		}
 	}
-
+#endif
 
 	// http://www.makcraft.com/blog/meditation/2014/02/02/to-scroll-from-the-viewmodel-on-wpf/
 	// HACK: ビューがアクティブになっていないと反映されない模様。
