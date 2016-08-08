@@ -123,6 +123,102 @@ namespace MyWpfConverters
 		}
 	}
 
+	public class Double2XYToPointConverter : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			if (values.Length == 2 &&
+				values[0] is double &&
+				values[1] is double)
+			{
+				var x = (double)values[0];
+				var y = (double)values[1];
+
+				return new Point(x, y);
+			}
+
+			return DependencyProperty.UnsetValue;
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+		{
+			throw new NotSupportedException();
+		}
+	}
+
+	public class Int2XYToPointConverter : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			if (values.Length == 2 &&
+				values[0] is int &&
+				values[1] is int)
+			{
+				var x = (int)values[0];
+				var y = (int)values[1];
+
+				return new Point(x, y);
+			}
+
+			return DependencyProperty.UnsetValue;
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+		{
+			throw new NotSupportedException();
+		}
+	}
+
+	public class Int4XYXYToMeanPointConverter : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			if (values.Length == 4 &&
+				values[0] is int &&
+				values[1] is int &&
+				values[2] is int &&
+				values[3] is int)
+			{
+				var x0 = (int)values[0];
+				var y0 = (int)values[1];
+				var x1 = (int)values[2];
+				var y1 = (int)values[3];
+
+				return new Point(0.5 * (x0 + x1), 0.5 * (y0 + y1));
+			}
+
+			return DependencyProperty.UnsetValue;
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+		{
+			throw new NotSupportedException();
+		}
+	}
+
+	public class Double2ToMeanDoubleConverter : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			if (values.Length == 2 &&
+				values[0] is double &&
+				values[1] is double)
+			{
+				var v0 = (double)values[0];
+				var v1 = (double)values[1];
+
+				return 0.5 * (v0 + v1);
+			}
+
+			return DependencyProperty.UnsetValue;
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+		{
+			throw new NotSupportedException();
+		}
+	}
+
 	/// <summary>
 	/// RectangleGeometry.Rect には直接データ バインディングできないので、MultiBinding とコンバーターを経由する必要がある。
 	/// </summary>
@@ -177,6 +273,32 @@ namespace MyWpfConverters
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
 		{
 			throw new NotSupportedException();
+		}
+	}
+
+	/// <summary>
+	/// Viewbox 内で拡大縮小率によらず画面表示上の線幅などを一定に保つために利用する。
+	/// </summary>
+	public class DivideDoubleByScalingRatioConverter : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			if (values.Length == 3 &&
+				values[0] is double &&
+				values[1] is double &&
+				values[2] is double)
+			{
+				var v0 = (double)values[0]; // Main source value
+				var v1 = (double)values[1]; // Original (non-scaled) size of UI element
+				var v2 = (double)values[2]; // Actual (scaled) size of UI element
+				return v0 * (v1 / v2);
+			}
+			return 0;
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

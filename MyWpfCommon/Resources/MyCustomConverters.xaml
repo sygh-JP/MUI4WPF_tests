@@ -9,6 +9,11 @@
     <myconvs:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
     <myconvs:NullableBooleanVisibilityConverter x:Key="NullableBooleanVisibilityConverter"/>
     <myconvs:TextFocusVisibilityConverter x:Key="TextFocusVisibilityConverter"/>
+    <myconvs:Double2XYToPointConverter x:Key="Double2XYToPointConverter"/>
+    <myconvs:Int2XYToPointConverter x:Key="Int2XYToPointConverter"/>
+    <myconvs:Int4XYXYToMeanPointConverter x:Key="Int4XYXYToMeanPointConverter"/>
+    <myconvs:Double2ToMeanDoubleConverter x:Key="Double2ToMeanDoubleConverter"/>
     <myconvs:Double4XYWidthHeightToRectConverter x:Key="Double4XYWidthHeightToRectConverter"/>
     <myconvs:Double4CenterXYRadiusXYToRectConverter x:Key="Double4CenterXYRadiusXYToRectConverter"/>
+    <myconvs:DivideDoubleByScalingRatioConverter x:Key="DivideDoubleByScalingRatioConverter"/>
 </ResourceDictionary>

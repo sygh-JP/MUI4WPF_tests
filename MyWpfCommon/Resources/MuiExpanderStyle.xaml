@@ -9,6 +9,14 @@
     <!-- HACK: マウスオーバー時に矢印の色の明るさが変化するとなおよい。 -->
     <!-- HACK: XAML エディター上で Content が展開・プレビューされない不具合がある。 -->
 
+    <!--
+    ちなみに、MouseOver 時に Name をもとに検索した内部コントロールの色を変更するような添付ビヘイビアを作成し、その場しのぎの解決策を導入しようとも考えたが、
+    Expander は WPF のバージョンというかテーマによって内部実装が大きく異なる模様。
+    https://msdn.microsoft.com/en-us/library/ms753296(v=vs.85).aspx
+    https://msdn.microsoft.com/en-us/library/ms753296.aspx
+    やはり MUI4WPF に合わせて ControlTemplate をきちんと作り込むのが正解。
+    -->
+
     <Style x:Key="MuiExpanderStyleKey" TargetType="Expander" BasedOn="{StaticResource {x:Type Expander}}">
         <Setter Property="Foreground" Value="{DynamicResource ItemText}" />
         <Setter Property="Template" Value="{DynamicResource ExpandTheTemplate}" />

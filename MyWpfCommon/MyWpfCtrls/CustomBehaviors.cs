@@ -335,6 +335,7 @@ namespace MyWpfBehaviors
 	}
 #endif
 
+	// 参考：
 	// http://www.makcraft.com/blog/meditation/2014/02/02/to-scroll-from-the-viewmodel-on-wpf/
 	// HACK: ビューがアクティブになっていないと反映されない模様。
 
@@ -411,6 +412,5 @@ namespace MyWpfBehaviors
 
 			SetKickScroll(control, ScrollJumpType.None); // プロパティ値を None に戻す。
 		}
-
 	}
 }
