@@ -162,7 +162,7 @@ namespace MyWpfCtrls
 		}
 
 		/// <summary>
-		/// 0～100 の範囲。
+		/// 0~100 の範囲。
 		/// </summary>
 		public double ProgressValue
 		{

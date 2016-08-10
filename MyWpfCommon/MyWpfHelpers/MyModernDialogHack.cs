@@ -17,6 +17,9 @@ using System.Windows.Shapes;
 
 namespace MyWpfHelpers
 {
+	/// <summary>
+	/// System.Windows.Forms.MessageBoxDefaultButton のアナロジー。
+	/// </summary>
 	public enum MessageBoxDefaultButton
 	{
 		Button1,
@@ -163,6 +166,12 @@ namespace MyWpfHelpers
 		}
 #endif
 
+		private static Window GetActiveOrMainWindow()
+		{
+			var activeWnd = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+			return activeWnd != null ? activeWnd : Application.Current.MainWindow;
+		}
+
 		/// <summary>
 		/// Displays a messagebox.
 		/// </summary>
@@ -175,23 +184,46 @@ namespace MyWpfHelpers
 		/// <returns></returns>
 		public static MessageBoxResult ShowMessage(string text, string title, MessageBoxButton button, MessageBoxImage image = MessageBoxImage.None, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1, List<string> buttonTexts = null)
 		{
+			// System.Windows.Application.MainWindow プロパティや System.Windows.Application.Windows プロパティはメインスレッドからのみ使用できる。
 			// NOTE: WPF 標準の MessageBox.Show() のように、サブスレッドから直接呼び出せるようにするためには、Dispatcher を経由する必要がある。
-			// HACK: メッセージ ボックスを表示している間はサブスレッドの実行が一時停止するのは同じだが、モードレスではなくモーダルになる。
+			// HACK: メッセージ ボックスを表示している間はサブスレッドの実行が一時停止するのは同じだが、Owner が暗黙的に指定されることで主従・前後関係が発生し、
+			// また ShowDialog() が使われるので、モードレスではなくモーダルになる。
+			// Owner を明示的に null にして、ShowInTaskbar を true にすれば、主従・前後関係は解消されるが、モードレスにはならない。
 
 			var dispatcher = Application.Current.Dispatcher;
 			if (dispatcher.CheckAccess())
 			{
-				return ShowMessageImpl(text, title, button, image, defaultButton, buttonTexts);
+				var owner = GetActiveOrMainWindow();
+				return ShowMessageImpl(owner, text, title, button, image, defaultButton, buttonTexts);
 			}
 			else
 			{
 				var result = MessageBoxResult.None;
-				dispatcher.Invoke(() => { result = ShowMessageImpl(text, title, button, image, defaultButton, buttonTexts); });
+				dispatcher.Invoke(() =>
+				{
+					var owner = GetActiveOrMainWindow();
+					result = ShowMessageImpl(owner, text, title, button, image, defaultButton, buttonTexts);
+				});
 				return result;
 			}
 		}
 
-		private static MessageBoxResult ShowMessageImpl(string text, string title, MessageBoxButton button, MessageBoxImage image = MessageBoxImage.None, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1, List<string> buttonTexts = null)
+		public static MessageBoxResult ShowMessage(Window owner, string text, string title, MessageBoxButton button, MessageBoxImage image = MessageBoxImage.None, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1, List<string> buttonTexts = null)
+		{
+			var dispatcher = owner.Dispatcher;
+			if (dispatcher.CheckAccess())
+			{
+				return ShowMessageImpl(owner, text, title, button, image, defaultButton, buttonTexts);
+			}
+			else
+			{
+				var result = MessageBoxResult.None;
+				dispatcher.Invoke(() => { result = ShowMessageImpl(owner, text, title, button, image, defaultButton, buttonTexts); });
+				return result;
+			}
+		}
+
+		private static MessageBoxResult ShowMessageImpl(Window owner, string text, string title, MessageBoxButton button, MessageBoxImage image = MessageBoxImage.None, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1, List<string> buttonTexts = null)
 		{
 			var dlg = CreateDefaultDialog(text, title, image);
 			// WPF 標準は OK のみの場合も Esc キーや Alt+F4 で閉じることができる。その場合も結果は OK 扱いになる。None ではない。
@@ -298,10 +330,15 @@ namespace MyWpfHelpers
 					dlg.YesButton.Focus();
 				}
 			};
-			if (Application.Current.MainWindow == null || Application.Current.MainWindow.Visibility != Visibility.Visible)
+			if (owner == null || owner.Visibility != Visibility.Visible)
 			{
 				dlg.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 				dlg.ShowInTaskbar = true;
+				dlg.Owner = null;
+			}
+			else
+			{
+				dlg.Owner = owner;
 			}
 			dlg.ShowDialog();
 			return GetDialogResult(dlg);
@@ -312,17 +349,37 @@ namespace MyWpfHelpers
 			var dispatcher = Application.Current.Dispatcher;
 			if (dispatcher.CheckAccess())
 			{
-				return ShowMessageImpl(text, title, image, buttonText);
+				var owner = GetActiveOrMainWindow();
+				return ShowMessageImpl(owner, text, title, image, buttonText);
 			}
 			else
 			{
 				var result = MessageBoxResult.None;
-				dispatcher.Invoke(() => { result = ShowMessageImpl(text, title, image, buttonText); });
+				dispatcher.Invoke(() =>
+				{
+					var owner = GetActiveOrMainWindow();
+					result = ShowMessageImpl(owner, text, title, image, buttonText);
+				});
 				return result;
 			}
 		}
 
-		private static MessageBoxResult ShowMessageImpl(string text, string title, MessageBoxImage image = MessageBoxImage.None, string buttonText = null)
+		public static MessageBoxResult ShowMessage(Window owner, string text, string title, MessageBoxImage image = MessageBoxImage.None, string buttonText = null)
+		{
+			var dispatcher = owner.Dispatcher;
+			if (dispatcher.CheckAccess())
+			{
+				return ShowMessageImpl(owner, text, title, image, buttonText);
+			}
+			else
+			{
+				var result = MessageBoxResult.None;
+				dispatcher.Invoke(() => { result = ShowMessageImpl(owner, text, title, image, buttonText); });
+				return result;
+			}
+		}
+
+		private static MessageBoxResult ShowMessageImpl(Window owner, string text, string title, MessageBoxImage image = MessageBoxImage.None, string buttonText = null)
 		{
 			var dlg = CreateDefaultDialog(text, title, image);
 			// いかなる方法で閉じられた場合でも None を返す。
@@ -340,10 +397,15 @@ namespace MyWpfHelpers
 				dlg.CloseButton.IsDefault = true;
 				dlg.CloseButton.Focus();
 			};
-			if (Application.Current.MainWindow == null || Application.Current.MainWindow.Visibility != Visibility.Visible)
+			if (owner == null || owner.Visibility != Visibility.Visible)
 			{
 				dlg.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 				dlg.ShowInTaskbar = true;
+				dlg.Owner = null;
+			}
+			else
+			{
+				dlg.Owner = owner;
 			}
 			dlg.ShowDialog();
 			//return GetDialogResult(dlg); // 分かりきっているので実行しない。
