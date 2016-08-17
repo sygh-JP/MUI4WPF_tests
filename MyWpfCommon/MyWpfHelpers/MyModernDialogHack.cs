@@ -19,6 +19,7 @@ namespace MyWpfHelpers
 {
 	/// <summary>
 	/// System.Windows.Forms.MessageBoxDefaultButton のアナロジー。
+	/// Win32 の MB_DEFBUTTON1, MB_DEFBUTTON2, MB_DEFBUTTON3, MB_DEFBUTTON4 に相当する。
 	/// </summary>
 	public enum MessageBoxDefaultButton
 	{
@@ -225,6 +226,13 @@ namespace MyWpfHelpers
 
 		private static MessageBoxResult ShowMessageImpl(Window owner, string text, string title, MessageBoxButton button, MessageBoxImage image = MessageBoxImage.None, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1, List<string> buttonTexts = null)
 		{
+			var dlg = CreateDialog(owner, text, title, button, image, defaultButton, buttonTexts);
+			dlg.ShowDialog();
+			return GetDialogResult(dlg);
+		}
+
+		private static ModernDialog CreateDialog(Window owner, string text, string title, MessageBoxButton button, MessageBoxImage image = MessageBoxImage.None, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1, List<string> buttonTexts = null)
+		{
 			var dlg = CreateDefaultDialog(text, title, image);
 			// WPF 標準は OK のみの場合も Esc キーや Alt+F4 で閉じることができる。その場合も結果は OK 扱いになる。None ではない。
 			// OKCancel, YesNoCancel を Esc キーや Alt+F4 で閉じると結果は Cancel 扱いになる。None ではない。
@@ -280,7 +288,6 @@ namespace MyWpfHelpers
 				if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control) && e.Key == Key.C)
 				{ Clipboard.SetText(FormatMessageContentsForClipboard(dlg, text, title)); }
 			};
-			// TODO: Win32 の MB_DEFBUTTON1, MB_DEFBUTTON2 などに相当するパラメータを指定できるようにしたほうがよい。
 
 			dlg.Buttons = EnumButtons(dlg, button);
 
@@ -340,8 +347,7 @@ namespace MyWpfHelpers
 			{
 				dlg.Owner = owner;
 			}
-			dlg.ShowDialog();
-			return GetDialogResult(dlg);
+			return dlg;
 		}
 
 		public static MessageBoxResult ShowMessage(string text, string title, MessageBoxImage image = MessageBoxImage.None, string buttonText = null)
@@ -381,6 +387,14 @@ namespace MyWpfHelpers
 
 		private static MessageBoxResult ShowMessageImpl(Window owner, string text, string title, MessageBoxImage image = MessageBoxImage.None, string buttonText = null)
 		{
+			var dlg = CreateDialog(owner, text, title, image, buttonText);
+			dlg.ShowDialog();
+			//return GetDialogResult(dlg); // 分かりきっているので実行しない。
+			return MessageBoxResult.None;
+		}
+
+		private static ModernDialog CreateDialog(Window owner, string text, string title, MessageBoxImage image = MessageBoxImage.None, string buttonText = null)
+		{
 			var dlg = CreateDefaultDialog(text, title, image);
 			// いかなる方法で閉じられた場合でも None を返す。
 			dlg.KeyDown += (s, e) => { if (e.Key == Key.Escape) { dlg.Close(); } };
@@ -407,9 +421,7 @@ namespace MyWpfHelpers
 			{
 				dlg.Owner = owner;
 			}
-			dlg.ShowDialog();
-			//return GetDialogResult(dlg); // 分かりきっているので実行しない。
-			return MessageBoxResult.None;
+			return dlg;
 		}
 
 		private static string GetButtonsStringForClipboard(ModernDialog dlg)
@@ -458,6 +470,9 @@ namespace MyWpfHelpers
 
 			// WPF 標準メッセージボックス（Win32 API）の場合、一定の幅までは可変だが、それ以上は固定となる。
 			// BBCodeBlock に Width を指定せず、MinWidth や MaxWidth を指定するだけでは、折り返しがうまく効かない模様。
+			// Label だとアンダースコアが使えないので TextBlock を使う。
+
+			// HACK: MFC の CTaskDialog::SetVerificationCheckboxText() のようなものを実装する？
 
 #if false
 			var codeBlock = new BBCodeBlock { BBCode = text, Margin = new Thickness(8, 8, 0, 8), VerticalAlignment = VerticalAlignment.Center, TextWrapping = TextWrapping.Wrap, Width = 340 };
@@ -507,6 +522,7 @@ namespace MyWpfHelpers
 
 			// MUI4WPF のオリジナル実装では、高さ制限がかなりきついが、
 			// WPF 標準のメッセージボックス（というか Win32 メッセージボックス）は一応ワークエリアの高さまで伸ばせるはずなので、修正しておく。
+			// HACK: システム設定やユーザー設定の変更には追従していない。
 			return new ModernDialog
 			{
 				Title = title,
@@ -540,6 +556,8 @@ namespace MyWpfHelpers
 
 		//const string InternalFieldNameOfDialogResult = "dialogResult"; // Ver.1.0.5 まで。
 		const string InternalFieldNameOfDialogResult = "messageBoxResult"; // Ver.1.0.6 から。
+
+		// HACK: ModernDialog 派生クラスを作って、専用フィールドを用意したほうがよいかも。
 
 		private static MessageBoxResult GetDialogResult(ModernDialog dlg)
 		{
