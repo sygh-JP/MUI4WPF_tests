@@ -2,12 +2,12 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     >
-    <!-- iOS/Windows 10 ライクなスライドスイッチ式チェックボックス。MUI4WPF と調和する Modern スタイルにしている。 -->
+    <!-- iOS/Windows 10 ライクなスライドスイッチ式チェックボックス。Android でいう Switch 要素。MUI4WPF と調和する Modern スタイルにしている。 -->
     <!-- WinRT には Windows.UI.Xaml.Controls.ToggleSwitch が存在するが、Windows 8.x では矩形の外観だった。 -->
-    <!-- HACK: Null を表現できないという課題がある。 -->
-    <!-- HACK: ON のときの背景色を添付プロパティなどで変更できるといいかもしれない。 -->
+    <!-- HACK: ON のときの背景色を添付プロパティなどで変更できるといいかもしれない。ON/OFF 文字色とのコントラストも考慮する必要はあるが…… -->
     <!-- 参考: http://stackoverflow.com/questions/865767/slider-on-off-switch-in-wpf -->
-    <Style x:Key="SlideSwitchCheckBoxStyle1Key" TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+    <!-- TODO: Android 系や Win8.x 系の矩形外観も悪くないので、別途 SquareSlideSwitchCheckBoxStyleKey として実装してみる。 -->
+    <Style x:Key="RoundSlideSwitchCheckBoxStyleKey" TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
         <Setter Property="Foreground" Value="{DynamicResource ItemText}"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -15,10 +15,13 @@
                     <ControlTemplate.Resources>
                         <Storyboard x:Key="OnChecking">
                             <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slideSwitchCircle" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
-                                <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="24"/> <!-- (Grid.Width - Grid.Height) -->
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="34"/> <!-- (Grid.Width - Grid.Height) -->
                             </DoubleAnimationUsingKeyFrames>
                             <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slideSwitchOnRect" Storyboard.TargetProperty="Width">
-                                <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="24"/>
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="34"/>
+                            </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00.1000000" Storyboard.TargetName="textblockON" Storyboard.TargetProperty="Opacity">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
                             </DoubleAnimationUsingKeyFrames>
                         </Storyboard>
                         <Storyboard x:Key="OnUnchecking">
@@ -28,22 +31,47 @@
                             <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slideSwitchOnRect" Storyboard.TargetProperty="Width">
                                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0"/>
                             </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00.1000000" Storyboard.TargetName="textblockOFF" Storyboard.TargetProperty="Opacity">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                        <!-- Null すなわち Indeterminate は、中央で止めることで表現する。そもそも表現する必要があるかどうか不明だが…… -->
+                        <Storyboard x:Key="OnIndeterminate">
+                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slideSwitchCircle" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="17"/>
+                            </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slideSwitchOnRect" Storyboard.TargetProperty="Width">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="17"/>
+                            </DoubleAnimationUsingKeyFrames>
                         </Storyboard>
                     </ControlTemplate.Resources>
 
                     <DockPanel x:Name="dockPanel">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CheckStates">
+                                <VisualState x:Name="Checked" Storyboard="{StaticResource OnChecking}">
+                                </VisualState>
+                                <VisualState x:Name="Unchecked" Storyboard="{StaticResource OnUnchecking}">
+                                </VisualState>
+                                <VisualState x:Name="Indeterminate" Storyboard="{StaticResource OnIndeterminate}">
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <!--
                         チェックボックスはラベル部分をクリック／タップしても操作できるが、本来スライドスイッチはラベルと一体化させる必要がない。
                         また、Windows 8.x/10 ではスライドスイッチの状態に応じて、近くに添えられた On/Off（オン/オフ）というラベルが連動する。
                         とはいえ、アクセスキーなどの絡みもあるので、この Style ではあえてチェックボックスの仕様に近いものにする。
                         WinRT の ToggleSwitch を完全に模倣したい場合、別途ユーザーコントロールなどを作成したほうがよい。
+                        HACK: MUI4WPF のアクセントカラーなどに応じて、ON のときの色を変えられるとよい。TemplateBinding を使って Background を関連付ける？
                         -->
                         <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" RecognizesAccessKey="True" VerticalAlignment="Center"/>
-                        <Grid Margin="15,5,0,5" Width="40" Height="16" HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <Grid Margin="15,5,0,5" Width="50" Height="16" HorizontalAlignment="Left" VerticalAlignment="Center">
                             <Border Background="Gray" CornerRadius="7"/>
                             <Ellipse HorizontalAlignment="Left" Width="14" Height="14" Margin="1" Fill="{Binding ElementName=slideSwitchOnRect, Path=Fill}"/>
-                            <Rectangle HorizontalAlignment="Left" x:Name="slideSwitchOnRect" Width="0" Height="14" Margin="8,1,0,1" Fill="RoyalBlue"/>
-                            <Ellipse HorizontalAlignment="Left" x:Name="slideSwitchCircle" Width="14" Height="14" Margin="1" Fill="WhiteSmoke">
+                            <TextBlock x:Name="textblockOFF" Text="OFF" HorizontalAlignment="Right" Foreground="WhiteSmoke" FontSize="10" Padding="5,1" Opacity="0"/>
+                            <Rectangle x:Name="slideSwitchOnRect" HorizontalAlignment="Left" Width="0" Height="14" Margin="8,1,0,1" Fill="RoyalBlue"/>
+                            <TextBlock x:Name="textblockON" Text="ON" HorizontalAlignment="Left" Foreground="WhiteSmoke" FontSize="10" Padding="5,1" Opacity="0"/>
+                            <Ellipse x:Name="slideSwitchCircle" HorizontalAlignment="Left" Width="14" Height="14" Margin="1" Fill="WhiteSmoke">
                                 <Ellipse.RenderTransform>
                                     <TransformGroup>
                                         <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -57,15 +85,17 @@
                     </DockPanel>
 
                     <ControlTemplate.Triggers>
-                        <!-- HACK: デザイン時に反映されない。 -->
+                        <!-- NOTE: Trigger を使った場合、デザイン時に状態が反映されない。VisualStateManager を代わりに使えばよいらしい。 -->
+                        <!--
                         <Trigger Property="IsChecked" Value="True">
                             <Trigger.ExitActions>
-                                <BeginStoryboard Storyboard="{StaticResource OnUnchecking}" x:Name="OnUnchecking_BeginStoryboard"/>
+                                <BeginStoryboard Storyboard="{StaticResource OnUnchecking}"/>
                             </Trigger.ExitActions>
                             <Trigger.EnterActions>
-                                <BeginStoryboard Storyboard="{StaticResource OnChecking}" x:Name="OnChecking_BeginStoryboard"/>
+                                <BeginStoryboard Storyboard="{StaticResource OnChecking}"/>
                             </Trigger.EnterActions>
                         </Trigger>
+                        -->
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" Value="{DynamicResource ItemTextDisabled}"/>
                         </Trigger>

@@ -12,11 +12,11 @@ namespace MyWpfConverters
 		{
 			if (targetType != typeof(bool))
 			{
-				throw new ArgumentException("The target must be a 'bool'.");
+				throw new ArgumentException("The target must be a 'bool'.", "targetType");
 			}
 			if (!(value is bool))
 			{
-				throw new ArgumentException("The value must be a 'bool'.");
+				throw new ArgumentException("The value must be a 'bool'.", "value");
 			}
 			return !(bool)value;
 		}
@@ -34,11 +34,11 @@ namespace MyWpfConverters
 		{
 			if (targetType != typeof(double))
 			{
-				throw new ArgumentException("The target must be a 'double'.");
+				throw new ArgumentException("The target must be a 'double'.", "targetType");
 			}
 			if (!(value is double))
 			{
-				throw new ArgumentException("The value must be a 'double'.");
+				throw new ArgumentException("The value must be a 'double'.", "value");
 			}
 			return (double)value * 0.5;
 		}
@@ -55,11 +55,11 @@ namespace MyWpfConverters
 		{
 			if (targetType != typeof(Visibility))
 			{
-				throw new ArgumentException("The target must be a 'Visibility'.");
+				throw new ArgumentException("The target must be a 'Visibility'.", "targetType");
 			}
 			if (!(value is bool))
 			{
-				throw new ArgumentException("The value must be a 'bool'.");
+				throw new ArgumentException("The value must be a 'bool'.", "value");
 			}
 			var selected = (bool)value;
 
@@ -78,11 +78,11 @@ namespace MyWpfConverters
 		{
 			if (targetType != typeof(Visibility))
 			{
-				throw new ArgumentException("The target must be a 'Visibility'.");
+				throw new ArgumentException("The target must be a 'Visibility'.", "targetType");
 			}
 			if (!(value is bool?))
 			{
-				throw new ArgumentException("The value must be a 'bool?'.");
+				throw new ArgumentException("The value must be a 'bool?'.", "value");
 			}
 
 			var selected = (bool?)value;

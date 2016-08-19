@@ -174,9 +174,9 @@
                 <ScrollBar Orientation="Horizontal" Minimum="0" Maximum="100" ViewportSize="20" LargeChange="10" SmallChange="1"/>
             </StackPanel>
             <StackPanel Margin="4">
-                <CheckBox Content="Slide-switch check1" IsChecked="True" Style="{StaticResource SlideSwitchCheckBoxStyle1Key}"/>
-                <CheckBox Content="Slide-switch check2" IsChecked="False" Style="{StaticResource SlideSwitchCheckBoxStyle1Key}"/>
-                <CheckBox Content="Slide-switch check3" IsChecked="{x:Null}" Style="{StaticResource SlideSwitchCheckBoxStyle1Key}"/>
+                <CheckBox Content="Slide-switch check1" IsChecked="True" Style="{StaticResource RoundSlideSwitchCheckBoxStyleKey}"/>
+                <CheckBox Content="Slide-switch check2" IsChecked="False" Style="{StaticResource RoundSlideSwitchCheckBoxStyleKey}"/>
+                <CheckBox Content="Slide-switch check3" IsChecked="{x:Null}" IsThreeState="True" Style="{StaticResource RoundSlideSwitchCheckBoxStyleKey}"/>
             </StackPanel>
         </UniformGrid>
     </Grid>

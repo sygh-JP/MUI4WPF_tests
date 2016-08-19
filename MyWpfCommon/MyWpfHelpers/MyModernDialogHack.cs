@@ -293,7 +293,7 @@ namespace MyWpfHelpers
 
 			if (buttonTexts != null && buttonTexts.Count() != dlg.Buttons.Count())
 			{
-				throw new ArgumentException("buttonTexts parameter is invalid!!");
+				throw new ArgumentException("Count of elements in buttonTexts is not equal to that of visual buttons!!", "buttonTexts");
 			}
 
 			dlg.Loaded += (s, e) =>

@@ -7,7 +7,7 @@
     <!-- https://mui.codeplex.com/discussions/447970 -->
     <!-- https://github.com/AydinAdn/ModernUIExpander/blob/master/FirstFloor.ModernUI/Assets/Expander.xaml -->
     <!-- HACK: マウスオーバー時に矢印の色の明るさが変化するとなおよい。 -->
-    <!-- HACK: XAML エディター上で Content が展開・プレビューされない不具合がある。 -->
+    <!-- HACK: XAML エディター上で IsExpanded="True" を指定していても、デザイン時に Content が展開・プレビューされない不具合がある。ExpandDirection の設定も反映されない。アニメーション遷移が原因と思われる。VisualStateManager を使えば解決できそう？　ExpansionStates の VisualStateGroup で Expanded と Collapsed の VisualState を定義する。 -->
 
     <!--
     ちなみに、MouseOver 時に Name をもとに検索した内部コントロールの色を変更するような添付ビヘイビアを作成し、その場しのぎの解決策を導入しようとも考えたが、
