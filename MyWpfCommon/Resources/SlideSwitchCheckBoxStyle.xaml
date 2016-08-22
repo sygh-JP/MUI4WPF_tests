@@ -85,7 +85,7 @@
                     </DockPanel>
 
                     <ControlTemplate.Triggers>
-                        <!-- NOTE: Trigger を使った場合、デザイン時に状態が反映されない。VisualStateManager を代わりに使えばよいらしい。 -->
+                        <!-- NOTE: Trigger を使ってアニメーションした場合、デザイン時に状態が反映されない。VisualStateManager を代わりに使えばよいらしい。 -->
                         <!--
                         <Trigger Property="IsChecked" Value="True">
                             <Trigger.ExitActions>

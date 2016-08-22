@@ -6,12 +6,14 @@
     <!-- 下記で追加のコントロール テンプレートとサンプル コードが提供されている。ありがたく拝借させていただくことにする。 -->
     <!-- https://mui.codeplex.com/discussions/447970 -->
     <!-- https://github.com/AydinAdn/ModernUIExpander/blob/master/FirstFloor.ModernUI/Assets/Expander.xaml -->
-    <!-- HACK: マウスオーバー時に矢印の色の明るさが変化するとなおよい。 -->
-    <!-- HACK: XAML エディター上で IsExpanded="True" を指定していても、デザイン時に Content が展開・プレビューされない不具合がある。ExpandDirection の設定も反映されない。アニメーション遷移が原因と思われる。VisualStateManager を使えば解決できそう？　ExpansionStates の VisualStateGroup で Expanded と Collapsed の VisualState を定義する。 -->
+    <!-- NOTE: オリジナル (24 Jun 2013) では、マウスオーバー時に矢印の色の明るさなどが変化していなかった。 -->
+    <!-- NOTE: オリジナル (24 Jun 2013) では、XAML エディター上で IsExpanded="True" を指定していても、デザイン時に Content が展開・プレビューされない不具合があった。アニメーション遷移が原因。 -->
+    <!-- HACK: ExpandDirection の設定が反映されない不具合がある。比較として WPF 4.5 オリジナルの Aero テーマの ControlTemplate 実装を調べてみたところ、Down/Left/Right/Up の設定ごとに Style を定義して Trigger で切り替えている。 -->
+    <!-- HACK: HorizontalContentAlignment, VerticalContentAlignment の設定が反映されない不具合がある。 -->
 
     <!--
     ちなみに、MouseOver 時に Name をもとに検索した内部コントロールの色を変更するような添付ビヘイビアを作成し、その場しのぎの解決策を導入しようとも考えたが、
-    Expander は WPF のバージョンというかテーマによって内部実装が大きく異なる模様。
+    Expander は WPF のバージョンというかテーマによって内部実装が大きく異なる模様。名前検索は NG。
     https://msdn.microsoft.com/en-us/library/ms753296(v=vs.85).aspx
     https://msdn.microsoft.com/en-us/library/ms753296.aspx
     やはり MUI4WPF に合わせて ControlTemplate をきちんと作り込むのが正解。
@@ -20,10 +22,41 @@
     <Style x:Key="MuiExpanderStyleKey" TargetType="Expander" BasedOn="{StaticResource {x:Type Expander}}">
         <Setter Property="Foreground" Value="{DynamicResource ItemText}" />
         <Setter Property="Template" Value="{DynamicResource ExpandTheTemplate}" />
+        <Style.Triggers>
+            <Trigger Property="ExpandDirection" Value="Up">
+            </Trigger>
+            <Trigger Property="ExpandDirection" Value="Down">
+            </Trigger>
+            <Trigger Property="ExpandDirection" Value="Left">
+            </Trigger>
+            <Trigger Property="ExpandDirection" Value="Right">
+            </Trigger>
+        </Style.Triggers>
     </Style>
+
+    <!--
+    Grid.Resources を使うと、XAML デザイナーで「XamlParseException: コレクション プロパティ 'System.Windows.Controls.Grid'.'RuntimeResources17' は null です。」という
+    例外がスローされる模様。しかし、文法的には本来何も間違っていないはずで、実際に実行してみれば正常に動作しているようなので、おそらく IDE のバグ。
+    VS 2012/2013/2015 いずれでも発生する。
+    ControlTemplate.Resources であれば OK。
+    -->
 
     <!-- Animated Expander Button's Template -->
     <ControlTemplate x:Key="AnimatedExpanderTemplate" TargetType="{x:Type ToggleButton}">
+        <ControlTemplate.Resources>
+            <!-- Timer settings, open expander rotates Arrow -->
+            <Storyboard x:Key="OnChecking">
+                <DoubleAnimation Storyboard.TargetName="Arrow"
+                                 Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                 To="180" Duration="0:0:0.2" />
+            </Storyboard>
+            <!-- Timer settings, close expander rotates Arrow back to original position -->
+            <Storyboard x:Key="OnUnchecking">
+                <DoubleAnimation Storyboard.TargetName="Arrow"
+                                 Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                 To="0" Duration="0:0:0.2" />
+            </Storyboard>
+        </ControlTemplate.Resources>
 
         <Grid HorizontalAlignment="Stretch" Width="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=ActualWidth}">
             <Grid.ColumnDefinitions>
@@ -31,6 +64,15 @@
                 <ColumnDefinition Width="50*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
+
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="CheckStates">
+                    <VisualState x:Name="Checked" Storyboard="{StaticResource OnChecking}">
+                    </VisualState>
+                    <VisualState x:Name="Unchecked" Storyboard="{StaticResource OnUnchecking}">
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
 
             <Rectangle Grid.ColumnSpan="3" Fill="Transparent" StrokeThickness="0" />
 
@@ -63,37 +105,44 @@
             <ContentPresenter Grid.Column="1" VerticalAlignment="Center" Margin="5,0,0,0" />
         </Grid>
 
-        <!-- Animate arrow when toggled, -->
         <ControlTemplate.Triggers>
+            <!-- NOTE: Trigger を使ってアニメーションした場合、デザイン時に状態が反映されない。VisualStateManager を代わりに使えばよいらしい。 -->
+            <!--
             <Trigger Property="IsChecked" Value="True">
                 <Trigger.EnterActions>
-                    <BeginStoryboard>
-                        <Storyboard>
-
-                            <!-- Timer settings, open expander rotates Arrow -->
-                            <DoubleAnimation Storyboard.TargetName="Arrow"
-                                             Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
-                                             To="180" Duration="0:0:0.2" />
-                        </Storyboard>
-                    </BeginStoryboard>
+                    <BeginStoryboard Storyboard="{StaticResource OnChecking}"/>
                 </Trigger.EnterActions>
                 <Trigger.ExitActions>
-                    <BeginStoryboard>
-                        <Storyboard>
-
-                            <!-- Timer settings, close expander rotates Arrow back to original position -->
-                            <DoubleAnimation Storyboard.TargetName="Arrow"
-                                             Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
-                                             To="0" Duration="0:0:0.2" />
-                        </Storyboard>
-                    </BeginStoryboard>
+                    <BeginStoryboard Storyboard="{StaticResource OnUnchecking}"/>
                 </Trigger.ExitActions>
+            </Trigger>
+            -->
+            <Trigger Property="IsMouseOver" Value="True">
+                <!--
+                <Setter Property="StrokeThickness" Value="2" TargetName="InnerCircle"/>
+                -->
+                <Setter Property="Stroke" Value="{DynamicResource WindowBorder}" TargetName="InnerCircle"/>
+                <Setter Property="Stroke" Value="{DynamicResource WindowBorder}" TargetName="Arrow"/>
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
     <!-- Expands the actual content -->
     <ControlTemplate x:Key="ExpandTheTemplate" TargetType="{x:Type Expander}">
+        <ControlTemplate.Resources>
+            <!-- Expand out -->
+            <Storyboard x:Key="OnExpanding">
+                <DoubleAnimation Storyboard.TargetName="ExpanderContent"
+                                 Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)" To="1"
+                                 Duration="0:0:0.2" />
+            </Storyboard>
+            <!-- Shrink in -->
+            <Storyboard x:Key="OnCollapsing">
+                <DoubleAnimation Storyboard.TargetName="ExpanderContent"
+                                 Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)" To="0"
+                                 Duration="0:0:0.2" />
+            </Storyboard>
+        </ControlTemplate.Resources>
 
         <Grid VerticalAlignment="Top">
             <Grid.RowDefinitions>
@@ -101,46 +150,40 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="ExpansionStates">
+                    <VisualState x:Name="Expanded" Storyboard="{StaticResource OnExpanding}">
+                    </VisualState>
+                    <VisualState x:Name="Collapsed" Storyboard="{StaticResource OnCollapsing}">
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+
             <ToggleButton Content="{TemplateBinding Header}"
                           Template="{StaticResource AnimatedExpanderTemplate}"
                           IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" />
 
-            <ContentPresenter x:Name="ExpanderContent" ContentSource="Content" Grid.Row="1">
+            <ContentPresenter x:Name="ExpanderContent" ContentSource="Content" Grid.Row="1"
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
                 <ContentPresenter.LayoutTransform>
-                    <ScaleTransform ScaleY="0" />
+                    <ScaleTransform ScaleX="1" ScaleY="1" />
                 </ContentPresenter.LayoutTransform>
             </ContentPresenter>
         </Grid>
 
-        <!-- Timer settings for expanding the content -->
         <ControlTemplate.Triggers>
+            <!-- NOTE: Trigger を使ってアニメーションした場合、デザイン時に状態が反映されない。VisualStateManager を代わりに使えばよいらしい。 -->
+            <!--
             <Trigger Property="IsExpanded" Value="True">
-
                 <Trigger.EnterActions>
-                    <BeginStoryboard>
-                        <Storyboard>
-
-                            <!-- Expand out -->
-                            <DoubleAnimation Storyboard.TargetName="ExpanderContent"
-                                    Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)" To="1"
-                                    Duration="0:0:0.2" />
-
-                        </Storyboard>
-                    </BeginStoryboard>
+                    <BeginStoryboard Storyboard="{StaticResource OnExpanding}"/>
                 </Trigger.EnterActions>
                 <Trigger.ExitActions>
-                    <BeginStoryboard>
-                        <Storyboard>
-
-                            <!-- Shrink in -->
-                            <DoubleAnimation Storyboard.TargetName="ExpanderContent"
-                                    Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)" To="0"
-                                    Duration="0:0:0.2" />
-
-                        </Storyboard>
-                    </BeginStoryboard>
+                    <BeginStoryboard Storyboard="{StaticResource OnCollapsing}"/>
                 </Trigger.ExitActions>
             </Trigger>
+            -->
         </ControlTemplate.Triggers>
     </ControlTemplate>
 </ResourceDictionary>
