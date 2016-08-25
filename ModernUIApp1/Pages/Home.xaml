@@ -6,8 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:mui="http://firstfloorsoftware.com/ModernUI"
     mc:Ignorable="d" 
-    d:DesignWidth="500"
-    d:DesignHeight="500"
+    d:DesignWidth="600"
+    d:DesignHeight="600"
     Background="{DynamicResource ResourceKey=WindowBackground}"
     Loaded="UserControl_Loaded"
     >
@@ -172,6 +172,8 @@
             <StackPanel Margin="4">
                 <Slider />
                 <ScrollBar Orientation="Horizontal" Minimum="0" Maximum="100" ViewportSize="20" LargeChange="10" SmallChange="1"/>
+                <!-- Expander には既定で MUI4WPF のテーマが用意されていない。構成によっては、囲み矢印の円の部分の Fill 色が透明になってしまうことがある模様。そうなると、Dark テーマでのマウスオーバー時に見づらくなる。 -->
+                <Expander Header="Expander" Foreground="{DynamicResource ItemText}"/>
             </StackPanel>
             <StackPanel Margin="4">
                 <CheckBox Content="Slide-switch check1" IsChecked="True" Style="{StaticResource RoundSlideSwitchCheckBoxStyleKey}"/>

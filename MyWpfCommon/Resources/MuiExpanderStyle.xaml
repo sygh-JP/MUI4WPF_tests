@@ -3,13 +3,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- MUI4WPF デフォルトでは Expander に対応していない。矢印やテキスト、マウスオーバー時の色がテーマに追従しない。 -->
-    <!-- 下記で追加のコントロール テンプレートとサンプル コードが提供されている。ありがたく拝借させていただくことにする。 -->
+    <!-- 下記で追加のコントロール テンプレートとサンプル コードが提供されている。これをベースにして改修した。 -->
     <!-- https://mui.codeplex.com/discussions/447970 -->
     <!-- https://github.com/AydinAdn/ModernUIExpander/blob/master/FirstFloor.ModernUI/Assets/Expander.xaml -->
     <!-- NOTE: オリジナル (24 Jun 2013) では、マウスオーバー時に矢印の色の明るさなどが変化していなかった。 -->
-    <!-- NOTE: オリジナル (24 Jun 2013) では、XAML エディター上で IsExpanded="True" を指定していても、デザイン時に Content が展開・プレビューされない不具合があった。アニメーション遷移が原因。 -->
-    <!-- HACK: ExpandDirection の設定が反映されない不具合がある。比較として WPF 4.5 オリジナルの Aero テーマの ControlTemplate 実装を調べてみたところ、Down/Left/Right/Up の設定ごとに Style を定義して Trigger で切り替えている。 -->
-    <!-- HACK: HorizontalContentAlignment, VerticalContentAlignment の設定が反映されない不具合がある。 -->
+    <!-- NOTE: オリジナル (24 Jun 2013) では、XAML エディター上で IsExpanded="True" を指定していても、デザイン時に Content が展開・プレビューされない不具合があった。Trigger によるアニメーション遷移が原因。 -->
+    <!-- NOTE: オリジナル (24 Jun 2013) では、HorizontalContentAlignment, VerticalContentAlignment の設定が反映されない不具合があった。 -->
+    <!-- NOTE: オリジナル (24 Jun 2013) では、ExpandDirection の設定が反映されない不具合があった。比較として WPF 4.5 オリジナルの Aero テーマの ControlTemplate 実装を調べてみたところ、Down/Left/Right/Up の設定ごとに Style を定義して Trigger で切り替えている。 -->
+    <!-- HACK: IsExpanded="False" を指定していた場合、コントロールをホストしているページの初回ロード時にアニメーションが実行されてしまい見苦しい。ユーザーがクリックしたときだけアニメーションするようにするか、それともいっそアニメーション自体をなくすか？ -->
 
     <!--
     ちなみに、MouseOver 時に Name をもとに検索した内部コントロールの色を変更するような添付ビヘイビアを作成し、その場しのぎの解決策を導入しようとも考えたが、
@@ -21,15 +22,18 @@
 
     <Style x:Key="MuiExpanderStyleKey" TargetType="Expander" BasedOn="{StaticResource {x:Type Expander}}">
         <Setter Property="Foreground" Value="{DynamicResource ItemText}" />
-        <Setter Property="Template" Value="{DynamicResource ExpandTheTemplate}" />
         <Style.Triggers>
-            <Trigger Property="ExpandDirection" Value="Up">
-            </Trigger>
             <Trigger Property="ExpandDirection" Value="Down">
+                <Setter Property="Template" Value="{DynamicResource MuiAnimatedExpanderTemplateDownKey}" />
             </Trigger>
-            <Trigger Property="ExpandDirection" Value="Left">
+            <Trigger Property="ExpandDirection" Value="Up">
+                <Setter Property="Template" Value="{DynamicResource MuiAnimatedExpanderTemplateUpKey}" />
             </Trigger>
             <Trigger Property="ExpandDirection" Value="Right">
+                <Setter Property="Template" Value="{DynamicResource MuiAnimatedExpanderTemplateRightKey}" />
+            </Trigger>
+            <Trigger Property="ExpandDirection" Value="Left">
+                <Setter Property="Template" Value="{DynamicResource MuiAnimatedExpanderTemplateLeftKey}" />
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -41,8 +45,8 @@
     ControlTemplate.Resources であれば OK。
     -->
 
-    <!-- Animated Expander Button's Template -->
-    <ControlTemplate x:Key="AnimatedExpanderTemplate" TargetType="{x:Type ToggleButton}">
+    <!-- Animated Expander Button's Template (DOWN) -->
+    <ControlTemplate x:Key="MuiAnimatedExpanderToggleButtonTemplateDownKey" TargetType="{x:Type ToggleButton}">
         <ControlTemplate.Resources>
             <!-- Timer settings, open expander rotates Arrow -->
             <Storyboard x:Key="OnChecking">
@@ -60,17 +64,15 @@
 
         <Grid HorizontalAlignment="Stretch" Width="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=ActualWidth}">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="22" />
+                <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="50*" />
-                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
 
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup x:Name="CheckStates">
-                    <VisualState x:Name="Checked" Storyboard="{StaticResource OnChecking}">
-                    </VisualState>
-                    <VisualState x:Name="Unchecked" Storyboard="{StaticResource OnUnchecking}">
-                    </VisualState>
+                    <VisualState x:Name="Checked" Storyboard="{StaticResource OnChecking}"/>
+                    <VisualState x:Name="Unchecked" Storyboard="{StaticResource OnUnchecking}"/>
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
 
@@ -78,22 +80,20 @@
 
             <Ellipse x:Name="OuterCircle"
                      Fill="{DynamicResource ExpanderBackground}"
-                     Margin="5"
                      Stroke="{DynamicResource ExpanderBackground}" StrokeThickness="1"
                      Width="21" Height="21"
                      HorizontalAlignment="Center" VerticalAlignment="Center" />
 
+            <!-- 半透明の WindowBorder だと主張が弱すぎる。 -->
             <Ellipse x:Name="InnerCircle"
                      Fill="{DynamicResource ExpanderBackground}"
-                     Margin="5"
-                     Stroke="{DynamicResource Accent}" StrokeThickness="1"
+                     Stroke="{DynamicResource ItemText}" StrokeThickness="1"
                      Width="19" Height="19"
                      HorizontalAlignment="Center" VerticalAlignment="Center" />
 
             <Path x:Name="Arrow"
                   Data="M 1,1.5 L 4.5,5 8,1.5"
-                  Margin="5"
-                  Stroke="{DynamicResource Accent}" StrokeThickness="2"
+                  Stroke="{DynamicResource ItemText}" StrokeThickness="2"
                   HorizontalAlignment="Center" VerticalAlignment="Center"
                   RenderTransformOrigin="0.5,0.5">
                 <Path.RenderTransform>
@@ -102,7 +102,7 @@
             </Path>
 
             <!-- This is the control to the right of the rotating Arrow -->
-            <ContentPresenter Grid.Column="1" VerticalAlignment="Center" Margin="5,0,0,0" />
+            <ContentPresenter Grid.Column="2" VerticalAlignment="Center" />
         </Grid>
 
         <ControlTemplate.Triggers>
@@ -121,14 +121,14 @@
                 <!--
                 <Setter Property="StrokeThickness" Value="2" TargetName="InnerCircle"/>
                 -->
-                <Setter Property="Stroke" Value="{DynamicResource WindowBorder}" TargetName="InnerCircle"/>
-                <Setter Property="Stroke" Value="{DynamicResource WindowBorder}" TargetName="Arrow"/>
+                <Setter Property="Stroke" Value="{DynamicResource Accent}" TargetName="InnerCircle"/>
+                <Setter Property="Stroke" Value="{DynamicResource Accent}" TargetName="Arrow"/>
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <!-- Expands the actual content -->
-    <ControlTemplate x:Key="ExpandTheTemplate" TargetType="{x:Type Expander}">
+    <!-- Expands the actual content (DOWN) -->
+    <ControlTemplate x:Key="MuiAnimatedExpanderTemplateDownKey" TargetType="{x:Type Expander}">
         <ControlTemplate.Resources>
             <!-- Expand out -->
             <Storyboard x:Key="OnExpanding">
@@ -152,20 +152,20 @@
 
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup x:Name="ExpansionStates">
-                    <VisualState x:Name="Expanded" Storyboard="{StaticResource OnExpanding}">
-                    </VisualState>
-                    <VisualState x:Name="Collapsed" Storyboard="{StaticResource OnCollapsing}">
-                    </VisualState>
+                    <VisualState x:Name="Expanded" Storyboard="{StaticResource OnExpanding}"/>
+                    <VisualState x:Name="Collapsed" Storyboard="{StaticResource OnCollapsing}"/>
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
 
             <ToggleButton Content="{TemplateBinding Header}"
-                          Template="{StaticResource AnimatedExpanderTemplate}"
-                          IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" />
+                          Template="{StaticResource MuiAnimatedExpanderToggleButtonTemplateDownKey}"
+                          IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                          Grid.Row="0"/>
 
-            <ContentPresenter x:Name="ExpanderContent" ContentSource="Content" Grid.Row="1"
+            <ContentPresenter x:Name="ExpanderContent" ContentSource="Content"
                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                              Grid.Row="1">
                 <ContentPresenter.LayoutTransform>
                     <ScaleTransform ScaleX="1" ScaleY="1" />
                 </ContentPresenter.LayoutTransform>
@@ -185,5 +185,337 @@
             </Trigger>
             -->
         </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!-- Animated Expander Button's Template (UP) -->
+    <ControlTemplate x:Key="MuiAnimatedExpanderToggleButtonTemplateUpKey" TargetType="{x:Type ToggleButton}">
+        <ControlTemplate.Resources>
+            <Storyboard x:Key="OnChecking">
+                <DoubleAnimation Storyboard.TargetName="Arrow"
+                                 Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                 To="0" Duration="0:0:0.2" />
+            </Storyboard>
+            <Storyboard x:Key="OnUnchecking">
+                <DoubleAnimation Storyboard.TargetName="Arrow"
+                                 Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                 To="180" Duration="0:0:0.2" />
+            </Storyboard>
+        </ControlTemplate.Resources>
+
+        <Grid HorizontalAlignment="Stretch" Width="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=ActualWidth}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="22" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="CheckStates">
+                    <VisualState x:Name="Checked" Storyboard="{StaticResource OnChecking}"/>
+                    <VisualState x:Name="Unchecked" Storyboard="{StaticResource OnUnchecking}"/>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+
+            <Rectangle Grid.ColumnSpan="3" Fill="Transparent" StrokeThickness="0" />
+
+            <Ellipse x:Name="OuterCircle"
+                     Fill="{DynamicResource ExpanderBackground}"
+                     Stroke="{DynamicResource ExpanderBackground}" StrokeThickness="1"
+                     Width="21" Height="21"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+            <Ellipse x:Name="InnerCircle"
+                     Fill="{DynamicResource ExpanderBackground}"
+                     Stroke="{DynamicResource ItemText}" StrokeThickness="1"
+                     Width="19" Height="19"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+            <Path x:Name="Arrow"
+                  Data="M 1,1.5 L 4.5,5 8,1.5"
+                  Stroke="{DynamicResource ItemText}" StrokeThickness="2"
+                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                  RenderTransformOrigin="0.5,0.5">
+                <Path.RenderTransform>
+                    <RotateTransform Angle="180" />
+                </Path.RenderTransform>
+            </Path>
+
+            <ContentPresenter Grid.Column="2" VerticalAlignment="Center" />
+        </Grid>
+
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Stroke" Value="{DynamicResource Accent}" TargetName="InnerCircle"/>
+                <Setter Property="Stroke" Value="{DynamicResource Accent}" TargetName="Arrow"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!-- Expands the actual content (UP) -->
+    <ControlTemplate x:Key="MuiAnimatedExpanderTemplateUpKey" TargetType="{x:Type Expander}">
+        <ControlTemplate.Resources>
+            <Storyboard x:Key="OnExpanding">
+                <DoubleAnimation Storyboard.TargetName="ExpanderContent"
+                                 Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)" To="1"
+                                 Duration="0:0:0.2" />
+            </Storyboard>
+            <Storyboard x:Key="OnCollapsing">
+                <DoubleAnimation Storyboard.TargetName="ExpanderContent"
+                                 Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)" To="0"
+                                 Duration="0:0:0.2" />
+            </Storyboard>
+        </ControlTemplate.Resources>
+
+        <Grid VerticalAlignment="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="ExpansionStates">
+                    <VisualState x:Name="Expanded" Storyboard="{StaticResource OnExpanding}"/>
+                    <VisualState x:Name="Collapsed" Storyboard="{StaticResource OnCollapsing}"/>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+
+            <ToggleButton Content="{TemplateBinding Header}"
+                          Template="{StaticResource MuiAnimatedExpanderToggleButtonTemplateUpKey}"
+                          IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                          Grid.Row="1"/>
+
+            <ContentPresenter x:Name="ExpanderContent" ContentSource="Content"
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                              Grid.Row="0">
+                <ContentPresenter.LayoutTransform>
+                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                </ContentPresenter.LayoutTransform>
+            </ContentPresenter>
+        </Grid>
+    </ControlTemplate>
+
+    <!-- Animated Expander Button's Template (RIGHT) -->
+    <ControlTemplate x:Key="MuiAnimatedExpanderToggleButtonTemplateRightKey" TargetType="{x:Type ToggleButton}">
+        <ControlTemplate.Resources>
+            <Storyboard x:Key="OnChecking">
+                <DoubleAnimation Storyboard.TargetName="Arrow"
+                                 Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                 To="90" Duration="0:0:0.2" />
+            </Storyboard>
+            <Storyboard x:Key="OnUnchecking">
+                <DoubleAnimation Storyboard.TargetName="Arrow"
+                                 Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                 To="270" Duration="0:0:0.2" />
+            </Storyboard>
+        </ControlTemplate.Resources>
+
+        <Grid VerticalAlignment="Stretch" Height="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=ActualHeight}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="22" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="CheckStates">
+                    <VisualState x:Name="Checked" Storyboard="{StaticResource OnChecking}"/>
+                    <VisualState x:Name="Unchecked" Storyboard="{StaticResource OnUnchecking}"/>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+
+            <Rectangle Grid.RowSpan="3" Fill="Transparent" StrokeThickness="0" />
+
+            <Ellipse x:Name="OuterCircle"
+                     Fill="{DynamicResource ExpanderBackground}"
+                     Stroke="{DynamicResource ExpanderBackground}" StrokeThickness="1"
+                     Width="21" Height="21"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+            <Ellipse x:Name="InnerCircle"
+                     Fill="{DynamicResource ExpanderBackground}"
+                     Stroke="{DynamicResource ItemText}" StrokeThickness="1"
+                     Width="19" Height="19"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+            <Path x:Name="Arrow"
+                  Data="M 1,1.5 L 4.5,5 8,1.5"
+                  Stroke="{DynamicResource ItemText}" StrokeThickness="2"
+                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                  RenderTransformOrigin="0.5,0.5">
+                <Path.RenderTransform>
+                    <RotateTransform Angle="270" />
+                </Path.RenderTransform>
+            </Path>
+
+            <ContentPresenter Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Top" />
+        </Grid>
+
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Stroke" Value="{DynamicResource Accent}" TargetName="InnerCircle"/>
+                <Setter Property="Stroke" Value="{DynamicResource Accent}" TargetName="Arrow"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!-- Expands the actual content (RIGHT) -->
+    <ControlTemplate x:Key="MuiAnimatedExpanderTemplateRightKey" TargetType="{x:Type Expander}">
+        <ControlTemplate.Resources>
+            <Storyboard x:Key="OnExpanding">
+                <DoubleAnimation Storyboard.TargetName="ExpanderContent"
+                                 Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleX)" To="1"
+                                 Duration="0:0:0.2" />
+            </Storyboard>
+            <Storyboard x:Key="OnCollapsing">
+                <DoubleAnimation Storyboard.TargetName="ExpanderContent"
+                                 Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleX)" To="0"
+                                 Duration="0:0:0.2" />
+            </Storyboard>
+        </ControlTemplate.Resources>
+
+        <!-- HorizontalContentAlignment 指定時の挙動を合わせるため、水平方向の配置は WPF 標準テーマの実装に合わせてある。 -->
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="ExpansionStates">
+                    <VisualState x:Name="Expanded" Storyboard="{StaticResource OnExpanding}"/>
+                    <VisualState x:Name="Collapsed" Storyboard="{StaticResource OnCollapsing}"/>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+
+            <ToggleButton Content="{TemplateBinding Header}"
+                          Template="{StaticResource MuiAnimatedExpanderToggleButtonTemplateRightKey}"
+                          IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Top"
+                          Grid.Column="0"/>
+
+            <ContentPresenter x:Name="ExpanderContent" ContentSource="Content"
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                              Grid.Column="2">
+                <ContentPresenter.LayoutTransform>
+                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                </ContentPresenter.LayoutTransform>
+            </ContentPresenter>
+        </Grid>
+    </ControlTemplate>
+
+    <!-- Animated Expander Button's Template (LEFT) -->
+    <ControlTemplate x:Key="MuiAnimatedExpanderToggleButtonTemplateLeftKey" TargetType="{x:Type ToggleButton}">
+        <ControlTemplate.Resources>
+            <Storyboard x:Key="OnChecking">
+                <DoubleAnimation Storyboard.TargetName="Arrow"
+                                 Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                 To="270" Duration="0:0:0.2" />
+            </Storyboard>
+            <Storyboard x:Key="OnUnchecking">
+                <DoubleAnimation Storyboard.TargetName="Arrow"
+                                 Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                 To="90" Duration="0:0:0.2" />
+            </Storyboard>
+        </ControlTemplate.Resources>
+
+        <Grid VerticalAlignment="Stretch" Height="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=ActualHeight}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="22" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="CheckStates">
+                    <VisualState x:Name="Checked" Storyboard="{StaticResource OnChecking}"/>
+                    <VisualState x:Name="Unchecked" Storyboard="{StaticResource OnUnchecking}"/>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+
+            <Rectangle Grid.RowSpan="3" Fill="Transparent" StrokeThickness="0" />
+
+            <Ellipse x:Name="OuterCircle"
+                     Fill="{DynamicResource ExpanderBackground}"
+                     Stroke="{DynamicResource ExpanderBackground}" StrokeThickness="1"
+                     Width="21" Height="21"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+            <Ellipse x:Name="InnerCircle"
+                     Fill="{DynamicResource ExpanderBackground}"
+                     Stroke="{DynamicResource ItemText}" StrokeThickness="1"
+                     Width="19" Height="19"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+            <Path x:Name="Arrow"
+                  Data="M 1,1.5 L 4.5,5 8,1.5"
+                  Stroke="{DynamicResource ItemText}" StrokeThickness="2"
+                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                  RenderTransformOrigin="0.5,0.5">
+                <Path.RenderTransform>
+                    <RotateTransform Angle="90" />
+                </Path.RenderTransform>
+            </Path>
+
+            <ContentPresenter Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Top" />
+        </Grid>
+
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Stroke" Value="{DynamicResource Accent}" TargetName="InnerCircle"/>
+                <Setter Property="Stroke" Value="{DynamicResource Accent}" TargetName="Arrow"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!-- Expands the actual content (LEFT) -->
+    <ControlTemplate x:Key="MuiAnimatedExpanderTemplateLeftKey" TargetType="{x:Type Expander}">
+        <ControlTemplate.Resources>
+            <Storyboard x:Key="OnExpanding">
+                <DoubleAnimation Storyboard.TargetName="ExpanderContent"
+                                 Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleX)" To="1"
+                                 Duration="0:0:0.2" />
+            </Storyboard>
+            <Storyboard x:Key="OnCollapsing">
+                <DoubleAnimation Storyboard.TargetName="ExpanderContent"
+                                 Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleX)" To="0"
+                                 Duration="0:0:0.2" />
+            </Storyboard>
+        </ControlTemplate.Resources>
+
+        <!-- HorizontalContentAlignment 指定時の挙動を合わせるため、水平方向の配置は WPF 標準テーマの実装に合わせてある。 -->
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="ExpansionStates">
+                    <VisualState x:Name="Expanded" Storyboard="{StaticResource OnExpanding}"/>
+                    <VisualState x:Name="Collapsed" Storyboard="{StaticResource OnCollapsing}"/>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+
+            <ToggleButton Content="{TemplateBinding Header}"
+                          Template="{StaticResource MuiAnimatedExpanderToggleButtonTemplateLeftKey}"
+                          IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Top"
+                          Grid.Column="2"/>
+
+            <ContentPresenter x:Name="ExpanderContent" ContentSource="Content"
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                              Grid.Column="0">
+                <ContentPresenter.LayoutTransform>
+                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                </ContentPresenter.LayoutTransform>
+            </ContentPresenter>
+        </Grid>
     </ControlTemplate>
 </ResourceDictionary>

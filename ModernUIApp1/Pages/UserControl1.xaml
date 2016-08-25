@@ -33,7 +33,7 @@
         <TextBlock TextWrapping="Wrap" FontSize="14">
             This is my user-control as a page in <Bold>Modern UI for WPF</Bold> app.
         </TextBlock>
-        <Expander Grid.Row="4" Header="Expander" ExpandDirection="Down" IsExpanded="True" Foreground="{DynamicResource ItemText}">
+        <Expander Grid.Row="4" Header="Expander" ExpandDirection="Down" HorizontalContentAlignment="Left" IsExpanded="False" Style="{StaticResource MuiExpanderStyleKey}">
             <StackPanel Orientation="Vertical" Margin="10,2">
                 <Label Content="Context menu comparison test:"/>
                 <TextBox Width="200" HorizontalAlignment="Left" Text="default"/>
