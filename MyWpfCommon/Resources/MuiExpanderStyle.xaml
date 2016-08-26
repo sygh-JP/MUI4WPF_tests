@@ -76,17 +76,16 @@
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
 
+            <!-- 交差判定用の矩形。 -->
             <Rectangle Grid.ColumnSpan="3" Fill="Transparent" StrokeThickness="0" />
 
             <Ellipse x:Name="OuterCircle"
-                     Fill="{DynamicResource ExpanderBackground}"
-                     Stroke="{DynamicResource ExpanderBackground}" StrokeThickness="1"
+                     StrokeThickness="1"
                      Width="21" Height="21"
                      HorizontalAlignment="Center" VerticalAlignment="Center" />
 
             <!-- 半透明の WindowBorder だと主張が弱すぎる。 -->
             <Ellipse x:Name="InnerCircle"
-                     Fill="{DynamicResource ExpanderBackground}"
                      Stroke="{DynamicResource ItemText}" StrokeThickness="1"
                      Width="19" Height="19"
                      HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -219,13 +218,11 @@
             <Rectangle Grid.ColumnSpan="3" Fill="Transparent" StrokeThickness="0" />
 
             <Ellipse x:Name="OuterCircle"
-                     Fill="{DynamicResource ExpanderBackground}"
-                     Stroke="{DynamicResource ExpanderBackground}" StrokeThickness="1"
+                     StrokeThickness="1"
                      Width="21" Height="21"
                      HorizontalAlignment="Center" VerticalAlignment="Center" />
 
             <Ellipse x:Name="InnerCircle"
-                     Fill="{DynamicResource ExpanderBackground}"
                      Stroke="{DynamicResource ItemText}" StrokeThickness="1"
                      Width="19" Height="19"
                      HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -327,13 +324,11 @@
             <Rectangle Grid.RowSpan="3" Fill="Transparent" StrokeThickness="0" />
 
             <Ellipse x:Name="OuterCircle"
-                     Fill="{DynamicResource ExpanderBackground}"
-                     Stroke="{DynamicResource ExpanderBackground}" StrokeThickness="1"
+                     StrokeThickness="1"
                      Width="21" Height="21"
                      HorizontalAlignment="Center" VerticalAlignment="Center" />
 
             <Ellipse x:Name="InnerCircle"
-                     Fill="{DynamicResource ExpanderBackground}"
                      Stroke="{DynamicResource ItemText}" StrokeThickness="1"
                      Width="19" Height="19"
                      HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -439,13 +434,11 @@
             <Rectangle Grid.RowSpan="3" Fill="Transparent" StrokeThickness="0" />
 
             <Ellipse x:Name="OuterCircle"
-                     Fill="{DynamicResource ExpanderBackground}"
-                     Stroke="{DynamicResource ExpanderBackground}" StrokeThickness="1"
+                     StrokeThickness="1"
                      Width="21" Height="21"
                      HorizontalAlignment="Center" VerticalAlignment="Center" />
 
             <Ellipse x:Name="InnerCircle"
-                     Fill="{DynamicResource ExpanderBackground}"
                      Stroke="{DynamicResource ItemText}" StrokeThickness="1"
                      Width="19" Height="19"
                      HorizontalAlignment="Center" VerticalAlignment="Center" />

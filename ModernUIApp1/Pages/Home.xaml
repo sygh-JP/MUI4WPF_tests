@@ -13,7 +13,8 @@
     >
     <!--
     MUI4WPF の CheckBox で中間状態（IsThreeState="True", IsChecked="{x:Null}"）にすると、なぜか Foreground に Disabled 状態のものが使われる。
-    MUI4WPF の RadioButton はなぜか矩形デザイン。Elysium のほうがよい。
+    MUI4WPF の RadioButton はなぜか円形ではなく矩形デザイン。Elysium のほうがよい。
+    App.xaml にこれらの問題を修正した暗黙の Style を定義することで、既定値をオーバーライドする。
     http://www.usability.gr.jp/alertbox/20040927.html
     ToggleButton に関しては、Elysium のものはまだマシだが（Background の色が、IsChecked="False" でテーマ色、IsChecked="True" でダークグレーになる）、
     MUI4WPF のは完全にアウト（IsChecked で外観が変化しない）。
@@ -172,7 +173,7 @@
             <StackPanel Margin="4">
                 <Slider />
                 <ScrollBar Orientation="Horizontal" Minimum="0" Maximum="100" ViewportSize="20" LargeChange="10" SmallChange="1"/>
-                <!-- Expander には既定で MUI4WPF のテーマが用意されていない。構成によっては、囲み矢印の円の部分の Fill 色が透明になってしまうことがある模様。そうなると、Dark テーマでのマウスオーバー時に見づらくなる。 -->
+                <!-- Expander には既定で MUI4WPF のテーマが用意されていない。しかし、どうやら Windows 7 の Aero では、囲み矢印の円の部分の Fill 色が透明になってしまうことがある模様。そうなると、Dark テーマでのマウスオーバー時に見づらくなる。 -->
                 <Expander Header="Expander" Foreground="{DynamicResource ItemText}"/>
             </StackPanel>
             <StackPanel Margin="4">
