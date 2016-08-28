@@ -75,9 +75,9 @@
             </StackPanel>
             <GroupBox Header="Radio Buttons" Margin="4">
                 <StackPanel>
-                    <RadioButton Name="radio1" Content="radio1" IsChecked="True"/>
-                    <RadioButton Name="radio2" Content="radio2"/>
-                    <RadioButton Name="radio3" Content="radio3"/>
+                    <RadioButton GroupName="radioGroup1" Name="radio1" Content="radio1" IsChecked="True"/>
+                    <RadioButton GroupName="radioGroup1" Name="radio2" Content="radio2"/>
+                    <RadioButton GroupName="radioGroup1" Name="radio3" Content="radio3"/>
                 </StackPanel>
             </GroupBox>
             <StackPanel Margin="4">
@@ -125,8 +125,8 @@
             </StackPanel>
             <StackPanel Margin="4">
                 <!-- アイコンのジオメトリを付けないと一見ラジオ ボタンに見える。 -->
-                <mui:ModernButton Name="mbutton1" IconData="" VerticalAlignment="Bottom" Content="modern button1" Background="Red" BorderThickness="1" BorderBrush="Gray"/>
-                <mui:ModernButton Name="mbutton2" IconData="" VerticalAlignment="Bottom" Content="modern button2" Background="Red" BorderThickness="1" BorderBrush="Gray"/>
+                <mui:ModernButton Name="mbutton1" IconData="{StaticResource ModernInformationIconGeometryKey}" VerticalAlignment="Bottom" Content="modern button1" Background="Red" BorderThickness="1" BorderBrush="Gray"/>
+                <mui:ModernButton Name="mbutton2" IconData="{StaticResource ModernPeopleIconGeometryKey}" VerticalAlignment="Bottom" Content="modern button2" Background="Red" BorderThickness="1" BorderBrush="Gray"/>
             </StackPanel>
             <Grid Margin="4">
                 <Grid.RowDefinitions>
