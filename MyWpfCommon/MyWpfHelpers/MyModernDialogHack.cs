@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 
 namespace MyWpfHelpers
 {
+#if false
 	/// <summary>
 	/// System.Windows.Forms.MessageBoxDefaultButton のアナロジー。
 	/// Win32 の MB_DEFBUTTON1, MB_DEFBUTTON2, MB_DEFBUTTON3, MB_DEFBUTTON4 に相当する。
@@ -28,6 +29,7 @@ namespace MyWpfHelpers
 		Button3,
 		//Button4,
 	}
+#endif
 
 	public class MyModernCommonData
 	{
@@ -167,6 +169,7 @@ namespace MyWpfHelpers
 		}
 #endif
 
+		// 必ず UI スレッドから呼び出す。
 		private static Window GetActiveOrMainWindow()
 		{
 			var activeWnd = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
@@ -182,8 +185,8 @@ namespace MyWpfHelpers
 		/// <param name="image">The image.</param>
 		/// <param name="defaultButton">The default button number from left side.</param>
 		/// <param name="buttonTexts">The list of button label texts for localization or customization.</param>
-		/// <returns></returns>
-		public static MessageBoxResult ShowMessage(string text, string title, MessageBoxButton button, MessageBoxImage image = MessageBoxImage.None, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1, List<string> buttonTexts = null)
+		/// <returns>The result of messagebox.</returns>
+		public static MessageBoxResult ShowMessage(string text, string title, MessageBoxButton button, MessageBoxImage image = MessageBoxImage.None, int defaultButton = 0, List<string> buttonTexts = null)
 		{
 			// System.Windows.Application.MainWindow プロパティや System.Windows.Application.Windows プロパティはメインスレッドからのみ使用できる。
 			// NOTE: WPF 標準の MessageBox.Show() のように、サブスレッドから直接呼び出せるようにするためには、Dispatcher を経由する必要がある。
@@ -209,7 +212,7 @@ namespace MyWpfHelpers
 			}
 		}
 
-		public static MessageBoxResult ShowMessage(Window owner, string text, string title, MessageBoxButton button, MessageBoxImage image = MessageBoxImage.None, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1, List<string> buttonTexts = null)
+		public static MessageBoxResult ShowMessage(Window owner, string text, string title, MessageBoxButton button, MessageBoxImage image = MessageBoxImage.None, int defaultButton = 0, List<string> buttonTexts = null)
 		{
 			var dispatcher = owner.Dispatcher;
 			if (dispatcher.CheckAccess())
@@ -224,14 +227,21 @@ namespace MyWpfHelpers
 			}
 		}
 
-		private static MessageBoxResult ShowMessageImpl(Window owner, string text, string title, MessageBoxButton button, MessageBoxImage image = MessageBoxImage.None, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1, List<string> buttonTexts = null)
+		private static MessageBoxResult ShowMessageImpl(Window owner, string text, string title, MessageBoxButton button, MessageBoxImage image = MessageBoxImage.None, int defaultButton = 0, List<string> buttonTexts = null)
 		{
-			var dlg = CreateDialog(owner, text, title, button, image, defaultButton, buttonTexts);
+			var dlg = CreateTaskDialog(owner, text, title, button, image, defaultButton, buttonTexts);
 			dlg.ShowDialog();
 			return GetDialogResult(dlg);
 		}
 
-		private static ModernDialog CreateDialog(Window owner, string text, string title, MessageBoxButton button, MessageBoxImage image = MessageBoxImage.None, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1, List<string> buttonTexts = null)
+		// 必ず UI スレッドから呼び出す。
+		public static MyWpfCtrls.MyModernTaskDialog CreateTaskDialog(string text, string title, MessageBoxButton button, MessageBoxImage image = MessageBoxImage.None, int defaultButton = 0, List<string> buttonTexts = null)
+		{
+			return CreateTaskDialog(GetActiveOrMainWindow(), text, title, button, image, defaultButton, buttonTexts);
+		}
+
+		// 必ず UI スレッドから呼び出す。
+		public static MyWpfCtrls.MyModernTaskDialog CreateTaskDialog(Window owner, string text, string title, MessageBoxButton button, MessageBoxImage image = MessageBoxImage.None, int defaultButton = 0, List<string> buttonTexts = null)
 		{
 			var dlg = CreateDefaultDialog(text, title, image);
 			// WPF 標準は OK のみの場合も Esc キーや Alt+F4 で閉じることができる。その場合も結果は OK 扱いになる。None ではない。
@@ -336,6 +346,13 @@ namespace MyWpfHelpers
 					dlg.YesButton.IsDefault = true;
 					dlg.YesButton.Focus();
 				}
+
+				//System.Media.SystemSounds.Beep.Play();
+				//System.Media.SystemSounds.Question.Play();
+				//System.Media.SystemSounds.Hand.Play();
+				//System.Media.SystemSounds.Exclamation.Play();
+				//System.Media.SystemSounds.Asterisk.Play();
+				// TODO: 標準のメッセージボックスの仕様に合わせて、システム サウンドを再生する。
 			};
 			if (owner == null || owner.Visibility != Visibility.Visible)
 			{
@@ -350,50 +367,59 @@ namespace MyWpfHelpers
 			return dlg;
 		}
 
-		public static MessageBoxResult ShowMessage(string text, string title, MessageBoxImage image = MessageBoxImage.None, string buttonText = null)
+		/// <summary>
+		/// Displays a messagebox.
+		/// </summary>
+		/// <param name="text">The text.</param>
+		/// <param name="title">The title.</param>
+		/// <param name="image">The image.</param>
+		/// <param name="buttonText">The button label text for localization or customization.</param>
+		public static void ShowMessage(string text, string title, MessageBoxImage image = MessageBoxImage.None, string buttonText = null)
 		{
 			var dispatcher = Application.Current.Dispatcher;
 			if (dispatcher.CheckAccess())
 			{
 				var owner = GetActiveOrMainWindow();
-				return ShowMessageImpl(owner, text, title, image, buttonText);
+				ShowMessageImpl(owner, text, title, image, buttonText);
 			}
 			else
 			{
-				var result = MessageBoxResult.None;
 				dispatcher.Invoke(() =>
 				{
 					var owner = GetActiveOrMainWindow();
-					result = ShowMessageImpl(owner, text, title, image, buttonText);
+					ShowMessageImpl(owner, text, title, image, buttonText);
 				});
-				return result;
 			}
 		}
 
-		public static MessageBoxResult ShowMessage(Window owner, string text, string title, MessageBoxImage image = MessageBoxImage.None, string buttonText = null)
+		public static void ShowMessage(Window owner, string text, string title, MessageBoxImage image = MessageBoxImage.None, string buttonText = null)
 		{
 			var dispatcher = owner.Dispatcher;
 			if (dispatcher.CheckAccess())
 			{
-				return ShowMessageImpl(owner, text, title, image, buttonText);
+				ShowMessageImpl(owner, text, title, image, buttonText);
 			}
 			else
 			{
-				var result = MessageBoxResult.None;
-				dispatcher.Invoke(() => { result = ShowMessageImpl(owner, text, title, image, buttonText); });
-				return result;
+				dispatcher.Invoke(() => { ShowMessageImpl(owner, text, title, image, buttonText); });
 			}
 		}
 
-		private static MessageBoxResult ShowMessageImpl(Window owner, string text, string title, MessageBoxImage image = MessageBoxImage.None, string buttonText = null)
+		private static void ShowMessageImpl(Window owner, string text, string title, MessageBoxImage image = MessageBoxImage.None, string buttonText = null)
 		{
-			var dlg = CreateDialog(owner, text, title, image, buttonText);
+			var dlg = CreateTaskDialog(owner, text, title, image, buttonText);
 			dlg.ShowDialog();
 			//return GetDialogResult(dlg); // 分かりきっているので実行しない。
-			return MessageBoxResult.None;
 		}
 
-		private static ModernDialog CreateDialog(Window owner, string text, string title, MessageBoxImage image = MessageBoxImage.None, string buttonText = null)
+		// 必ず UI スレッドから呼び出す。
+		public static MyWpfCtrls.MyModernTaskDialog CreateTaskDialog(string text, string title, MessageBoxImage image = MessageBoxImage.None, string buttonText = null)
+		{
+			return CreateTaskDialog(GetActiveOrMainWindow(), text, title, image, buttonText);
+		}
+
+		// 必ず UI スレッドから呼び出す。
+		public static MyWpfCtrls.MyModernTaskDialog CreateTaskDialog(Window owner, string text, string title, MessageBoxImage image = MessageBoxImage.None, string buttonText = null)
 		{
 			var dlg = CreateDefaultDialog(text, title, image);
 			// いかなる方法で閉じられた場合でも None を返す。
@@ -410,6 +436,8 @@ namespace MyWpfHelpers
 				dlg.CloseButton.Content = buttonText ?? "_Close";
 				dlg.CloseButton.IsDefault = true;
 				dlg.CloseButton.Focus();
+
+				// TODO: 標準のメッセージボックスの仕様に合わせて、システム サウンドを再生する。
 			};
 			if (owner == null || owner.Visibility != Visibility.Visible)
 			{
@@ -451,88 +479,32 @@ namespace MyWpfHelpers
 		private static void AdjustTabNavigation(ModernDialog dlg)
 		{
 			// MUI4WPF デフォルトではなぜかボタン以外にキーボード フォーカスを受け取る余計な要素がある。その調整。
-			var btnContainerList = new List<ItemsControl>();
-			MyWpfControlHelper.SearchAllVisualChildrenRecursively(dlg, btnContainerList, (c) => { return c.ItemsSource == dlg.Buttons; });
-			//System.Diagnostics.Debug.WriteLine(btnContainerList.Count());
-			if (btnContainerList.Count() == 1)
+			// タブキーだけでなく、矢印キーへの対処も忘れずに。
+			// KeyboardNavigation.SetTabNavigation, KeyboardNavigation.SetIsTabStop では対処不可。
+			// フォーカスを受け取る要素は、
+			// System.Windows.Controls.ContentControl
+			// FirstFloor.ModernUI.Windows.Controls.TransitioningContentControl
+			// System.Windows.Controls.ItemsControl
+			// の3つである模様。
+			// 最後の ItemsControl は、ボタン群の直接の親パネル。
+			// HACK: Expander などにも対応する場合は、ホワイトリスト追加の対処が必要。
+
+			var elemList = new List<UIElement>();
+			MyWpfControlHelper.SearchAllVisualChildrenRecursively(dlg, elemList, (c) => { return !(c is System.Windows.Controls.Primitives.ButtonBase) && c.Focusable == true; });
+			foreach (var elem in elemList)
 			{
-				KeyboardNavigation.SetTabNavigation(btnContainerList[0], KeyboardNavigationMode.Cycle);
-				KeyboardNavigation.SetIsTabStop(btnContainerList[0], false);
+				elem.Focusable = false;
 			}
 		}
 
-		private static ModernDialog CreateDefaultDialog(string text, string title, MessageBoxImage image)
+		private static MyWpfCtrls.MyModernTaskDialog CreateDefaultDialog(string text, string title, MessageBoxImage image)
 		{
 			if (title == null)
 			{
 				title = MyWpfHelpers.MyWpfMiscHelper.GetAppName();
 			}
 
-			// WPF 標準メッセージボックス（Win32 API）の場合、一定の幅までは可変だが、それ以上は固定となる。
-			// BBCodeBlock に Width を指定せず、MinWidth や MaxWidth を指定するだけでは、折り返しがうまく効かない模様。
-			// Label だとアンダースコアが使えないので TextBlock を使う。
-
-			// HACK: MFC の CTaskDialog::SetVerificationCheckboxText() のようなものを実装する？
-
-#if false
-			var codeBlock = new BBCodeBlock { BBCode = text, Margin = new Thickness(8, 8, 0, 8), VerticalAlignment = VerticalAlignment.Center, TextWrapping = TextWrapping.Wrap, Width = 340 };
-#else
-			var codeBlock = new TextBlock { Text = text, Margin = new Thickness(8, 8, 0, 8), VerticalAlignment = VerticalAlignment.Center, TextWrapping = TextWrapping.Wrap, Width = 340 };
-#endif
-
-			// StackPanel だと、BBCodeBlock（の内部の TextBlock）の自動折り返し（TextWrapping プロパティ）が効かない。
-			var textAreaPanel = new DockPanel() { UseLayoutRounding = true };
-
-			// WPF 標準のように、MessageBoxImage を指定できるようにする。
-			const double size = 76;
-			var iconPath = new Path()
-			{
-				HorizontalAlignment = HorizontalAlignment.Center,
-				VerticalAlignment = VerticalAlignment.Center,
-				Width = size,
-				Height = size,
-			};
-			switch (image)
-			{
-				// Dark テーマの背景にも、Light テーマの背景にも映える色を使う。
-				case MessageBoxImage.Error:
-					iconPath.Data = CommonData.ErrorIconGeometry;
-					iconPath.Fill = Brushes.Crimson;
-					textAreaPanel.Children.Add(iconPath);
-					break;
-				case MessageBoxImage.Warning:
-					iconPath.Data = CommonData.WarningIconGeometry;
-					iconPath.Fill = Brushes.Orange;
-					textAreaPanel.Children.Add(iconPath);
-					break;
-				case MessageBoxImage.Information:
-					iconPath.Data = CommonData.InformationIconGeometry;
-					iconPath.Fill = Brushes.DeepSkyBlue;
-					textAreaPanel.Children.Add(iconPath);
-					break;
-				case MessageBoxImage.Question:
-					iconPath.Data = CommonData.QuestionIconGeometry;
-					iconPath.Fill = Brushes.DodgerBlue;
-					textAreaPanel.Children.Add(iconPath);
-					break;
-				default:
-					break;
-			}
-			textAreaPanel.Children.Add(codeBlock);
-
-			// MUI4WPF のオリジナル実装では、高さ制限がかなりきついが、
-			// WPF 標準のメッセージボックス（というか Win32 メッセージボックス）は一応ワークエリアの高さまで伸ばせるはずなので、修正しておく。
-			// HACK: システム設定やユーザー設定の変更には追従していない。
-			return new ModernDialog
-			{
-				Title = title,
-				Content = textAreaPanel,
-				Width = Double.NaN,
-				Height = Double.NaN,
-				SizeToContent = System.Windows.SizeToContent.WidthAndHeight,
-				MinHeight = 120,
-				MaxHeight = System.Windows.SystemParameters.WorkArea.Height,
-			};
+			return new MyWpfCtrls.MyModernTaskDialog() { Title = title, MainMessageText = text, IconType = image };
 		}
 
 		// リフレクションを使ってカプセル化を破壊する。本来は禁じ手。内部シンボル名はソースコードを直接解析した結果得たもの。
@@ -561,10 +533,15 @@ namespace MyWpfHelpers
 
 		private static MessageBoxResult GetDialogResult(ModernDialog dlg)
 		{
+#if false
 			var dialogResultField = typeof(ModernDialog).GetField(InternalFieldNameOfDialogResult,
 				System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
 			System.Diagnostics.Debug.Assert(dialogResultField != null);
 			return (MessageBoxResult)dialogResultField.GetValue(dlg);
+#else
+			// ModernDialog.MessageBoxResult は System.Windows.Window.DialogResult を隠ぺいしないように命名されている模様。
+			return dlg.MessageBoxResult;
+#endif
 		}
 
 		private static void SetDialogResult(ModernDialog dlg, MessageBoxResult value)

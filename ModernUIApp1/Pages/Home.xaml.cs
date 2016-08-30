@@ -106,9 +106,7 @@ namespace ModernUIApp1.Pages
 			};
 			this.button2.Click += (s, e) =>
 			{
-				var ret = MyWpfHelpers.MyModernDialogHack.ShowMessage(Poem.AmenimoMakezuText, Poem.AmenimoMakezuTitle, buttonText: "閉じる(_C)");
-				System.Diagnostics.Debug.WriteLine(ret);
-				System.Diagnostics.Debug.Assert(ret == MessageBoxResult.None);
+				MyWpfHelpers.MyModernDialogHack.ShowMessage(Poem.AmenimoMakezuText, Poem.AmenimoMakezuTitle, buttonText: "閉じる(_C)");
 				// 自動折り返しのテスト。
 				MyWpfHelpers.MyModernDialogHack.ShowMessage(Poem.Flatten(Poem.AmenimoMakezuText), Poem.AmenimoMakezuTitle, buttonText: "閉じる(_C)");
 			};
@@ -116,7 +114,7 @@ namespace ModernUIApp1.Pages
 			this.button4.Click += (s, e) =>
 			{
 				this._isModalProgressStopped = false;
-				var progWnd = MyWpfCtrls.MyModernProgressWindow.Create();
+				var progWnd = new MyWpfCtrls.MyModernProgressWindow();
 				progWnd.Owner = Application.Current.MainWindow;
 				progWnd.Title = Application.Current.MainWindow.Title;
 				progWnd.ProgressViewModel.Description = "Now waiting...";
@@ -144,6 +142,13 @@ namespace ModernUIApp1.Pages
 				var dlgResult = progWnd.UserDialogResult;
 				MyWpfHelpers.MyModernDialogHack.ShowMessage("DialogResult = " + MyMiscHelpers.MyGenericsHelper.ConvertNullableToExplicitString(dlgResult), null);
 			};
+			this.button5.Click += (s, e) =>
+			{
+				var taskDlg = MyWpfHelpers.MyModernDialogHack.CreateTaskDialog("Task dialog test", null, MessageBoxImage.Information);
+				taskDlg.IsVerificationCheckBoxVisible = true;
+				taskDlg.ShowDialog();
+				System.Diagnostics.Debug.WriteLine(taskDlg.VerificationCheckBoxState);
+			};
 		}
 
 		#region Progress Window
@@ -165,7 +170,7 @@ namespace ModernUIApp1.Pages
 				// MUI4WPF の ModernWindow であれば、システム コマンド ボタンの IsEnabled は Window.IsEnabled に影響を受けるので、
 				// うまく対応できるかもしれない。
 				Application.Current.MainWindow.IsHitTestVisible = false;
-				this._progressWindow = MyWpfCtrls.MyModernProgressWindow.Create();
+				this._progressWindow = new MyWpfCtrls.MyModernProgressWindow();
 				this._progressWindow.Owner = Application.Current.MainWindow;
 				this._progressWindow.ProgressViewModel.Description = description;
 				this._progressWindow.Title = Application.Current.MainWindow.Title;

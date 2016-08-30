@@ -19,20 +19,9 @@ namespace MyWpfCtrls
 	/// </summary>
 	public partial class MyProgressWindow : MyProgressWindowBase
 	{
-		internal MyProgressWindow()
+		public MyProgressWindow()
 		{
 			InitializeComponent();
-		}
-
-		/// <summary>
-		/// ファクトリ メソッド。
-		/// </summary>
-		/// <returns></returns>
-		public static MyProgressWindow Create()
-		{
-			var temp = new MyProgressWindow();
-			temp.Initialize();
-			return temp;
 		}
 	}
 }

@@ -123,6 +123,36 @@ namespace MyWpfConverters
 		}
 	}
 
+	public class Double4XYXYToLengthConverter : IMultiValueConverter
+	{
+		public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			if (values.Length == 4 &&
+				values[0] is double &&
+				values[1] is double &&
+				values[2] is double &&
+				values[3] is double)
+			{
+				var x0 = (double)values[0];
+				var y0 = (double)values[1];
+				var x1 = (double)values[2];
+				var y1 = (double)values[3];
+
+				// NaN は考慮しない。
+				var dx = x0 - x1;
+				var dy = y0 - y1;
+				return Math.Sqrt(dx * dx + dy * dy);
+			}
+
+			return DependencyProperty.UnsetValue;
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+		{
+			throw new NotSupportedException();
+		}
+	}
+
 	public class Double2XYToPointConverter : IMultiValueConverter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -249,6 +279,9 @@ namespace MyWpfConverters
 		}
 	}
 
+	/// <summary>
+	/// RectangleGeometry.Rect には直接データ バインディングできないので、MultiBinding とコンバーターを経由する必要がある。
+	/// </summary>
 	public class Double4CenterXYRadiusXYToRectConverter : IMultiValueConverter
 	{
 		public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -291,9 +324,19 @@ namespace MyWpfConverters
 				var v0 = (double)values[0]; // Main source value
 				var v1 = (double)values[1]; // Original (non-scaled) size of UI element
 				var v2 = (double)values[2]; // Actual (scaled) size of UI element
-				return v0 * (v1 / v2);
+				// 初回表示の際に v2 はゼロになりうる。浮動小数点数のゼロ割の結果は Infinity や NaN になる。
+				// しかし、Infinity を TextBlock.FontSize にバインドすると、
+				// デバッグ セッションにて IDE 出力ウィンドウにエラーを示す診断メッセージが出力されてうっとうしい。
+				// かといって、Infinity の代わりにゼロを強制的に返すようにすると、
+				// 今度は TextBlock.FontSize や CenteredEllipse.RadiusX/RadiusY のバインドでエラーメッセージが出力されてしまう。
+				// FontSize は 0.0 を許可しているはずなのに……
+				// ここは異常値として DependencyProperty.UnsetValue を返すのが正解らしい。
+				if (Math.Abs(v2) > Double.Epsilon)
+				{
+					return v0 * (v1 / v2);
+				}
 			}
-			return 0;
+			return DependencyProperty.UnsetValue;
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)

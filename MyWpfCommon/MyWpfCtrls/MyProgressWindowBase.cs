@@ -19,9 +19,11 @@ namespace MyWpfCtrls
 		bool _isEnforcedClosing = false;
 
 		public MyProgressWindowBase()
-		{ }
+		{
+			Initialize();
+		}
 
-		protected void Initialize()
+		private void Initialize()
 		{
 			this.ProgressViewModel = new MyProgressViewModel();
 

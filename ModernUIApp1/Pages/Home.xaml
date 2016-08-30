@@ -116,6 +116,7 @@
                 <Button Name="button2" Content="button2"/>
                 <Button Name="button3" Content="button3"/>
                 <Button Name="button4" Content="button4"/>
+                <Button Name="button5" Content="button5"/>
             </StackPanel>
             <StackPanel Margin="4">
                 <ToggleButton Name="toggle1" Content="toggle1" IsChecked="False"/>

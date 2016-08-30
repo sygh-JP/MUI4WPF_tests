@@ -66,6 +66,9 @@
     </Compile>
     <Compile Include="MyWpfCtrls\CustomBehaviors.cs" />
     <Compile Include="MyWpfCtrls\CustomConverters.cs" />
+    <Compile Include="MyWpfCtrls\MyModernTaskDialog.xaml.cs">
+      <DependentUpon>MyModernTaskDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MyWpfCtrls\MyProgressWindow.xaml.cs">
       <DependentUpon>MyProgressWindow.xaml</DependentUpon>
     </Compile>
@@ -104,6 +107,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="MyWpfCtrls\BalloonToolTipContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MyWpfCtrls\MyModernTaskDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

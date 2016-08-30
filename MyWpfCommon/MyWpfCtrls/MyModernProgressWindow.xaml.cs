@@ -20,20 +20,9 @@ namespace MyWpfCtrls
 	/// </summary>
 	public partial class MyModernProgressWindow : MyProgressWindowBase
 	{
-		internal MyModernProgressWindow()
+		public MyModernProgressWindow()
 		{
 			InitializeComponent();
-		}
-
-		/// <summary>
-		/// ファクトリ メソッド。
-		/// </summary>
-		/// <returns></returns>
-		public static MyModernProgressWindow Create()
-		{
-			var temp = new MyModernProgressWindow();
-			temp.Initialize();
-			return temp;
 		}
 	}
 }
