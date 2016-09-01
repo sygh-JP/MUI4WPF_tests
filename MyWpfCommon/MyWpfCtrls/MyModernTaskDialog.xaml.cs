@@ -91,5 +91,28 @@ namespace MyWpfCtrls
 				}
 			}
 		}
+
+		public static void PlaySound(MessageBoxImage image)
+		{
+			switch (image)
+			{
+				case MessageBoxImage.Error:
+					System.Media.SystemSounds.Hand.Play();
+					break;
+				case MessageBoxImage.Warning:
+					System.Media.SystemSounds.Exclamation.Play();
+					break;
+				case MessageBoxImage.Information:
+					System.Media.SystemSounds.Asterisk.Play();
+					break;
+				case MessageBoxImage.Question:
+					System.Media.SystemSounds.Question.Play();
+					break;
+				default:
+					break;
+			}
+			// Beep は例えばモーダルダイアログ表示中に親ウィンドウ領域をクリックしようとしたときなどに再生される音。
+			//System.Media.SystemSounds.Beep.Play();
+		}
 	}
 }

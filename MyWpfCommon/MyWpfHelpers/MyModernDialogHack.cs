@@ -347,12 +347,8 @@ namespace MyWpfHelpers
 					dlg.YesButton.Focus();
 				}
 
-				//System.Media.SystemSounds.Beep.Play();
-				//System.Media.SystemSounds.Question.Play();
-				//System.Media.SystemSounds.Hand.Play();
-				//System.Media.SystemSounds.Exclamation.Play();
-				//System.Media.SystemSounds.Asterisk.Play();
-				// TODO: 標準のメッセージボックスの仕様に合わせて、システム サウンドを再生する。
+				// 標準のメッセージボックスの仕様に合わせて、システム サウンドを再生する。
+				MyWpfCtrls.MyModernTaskDialog.PlaySound(image);
 			};
 			if (owner == null || owner.Visibility != Visibility.Visible)
 			{
@@ -437,7 +433,8 @@ namespace MyWpfHelpers
 				dlg.CloseButton.IsDefault = true;
 				dlg.CloseButton.Focus();
 
-				// TODO: 標準のメッセージボックスの仕様に合わせて、システム サウンドを再生する。
+				// 標準のメッセージボックスの仕様に合わせて、システム サウンドを再生する。
+				MyWpfCtrls.MyModernTaskDialog.PlaySound(image);
 			};
 			if (owner == null || owner.Visibility != Visibility.Visible)
 			{
