@@ -130,17 +130,17 @@ namespace MyWpfCtrls
 	}
 
 
-	public class MyProgressViewModel : MyWpfHelpers.MyNotifyPropertyChangedBase
+	public class MyProgressViewModel : MyBindingHelpers.MyNotifyPropertyChangedBase
 	{
 		public MyProgressViewModel()
 		{
-			this.StopCommand = new MyWpfHelpers.DelegateCommand();
+			this.StopCommand = new MyBindingHelpers.DelegateCommand();
 		}
 
 		/// <summary>
 		/// 停止（中断）コマンド。実際のイベントの割り付けはユーザーコード側で行なう。
 		/// </summary>
-		public MyWpfHelpers.DelegateCommand StopCommand { get; private set; }
+		public MyBindingHelpers.DelegateCommand StopCommand { get; private set; }
 
 		string _description;
 		Visibility _stopButtonVisibility = Visibility.Visible;

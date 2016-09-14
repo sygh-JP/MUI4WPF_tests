@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace MyWpfHelpers
+namespace MyBindingHelpers
 {
 	/// <summary>
 	/// INotifyPropertyChanged の実装を補助する抽象クラス。
@@ -84,6 +84,7 @@ namespace MyWpfHelpers
 
 	// Modern UI と従来の UI とで外観を変えるだけにして、内部処理や機能は共通化できるようにするため、
 	// コマンドやデータ モデルをビューと分離して、バインディングを使う。
+	// System.Windows.Input.ICommand は WPF だけでなく、WinRT や Silverlight でも使える模様。
 
 	// http://blog.hiros-dot.net/?p=5742
 
@@ -134,10 +135,9 @@ namespace MyWpfHelpers
 		}
 	}
 
-
-	public static class MyWpfBindingHelper
-	{
 #if false
+	public static class MyBindingHelper
+	{
 		// 元ネタ：http://d.hatena.ne.jp/okazuki/20100106/1262749172
 
 		/// <summary>
@@ -182,6 +182,6 @@ namespace MyWpfHelpers
 			// 下準備ができたので、イベント発行。
 			eventHandler(sender, new PropertyChangedEventArgs(memberEx.Member.Name));
 		}
-#endif
 	}
+#endif
 }

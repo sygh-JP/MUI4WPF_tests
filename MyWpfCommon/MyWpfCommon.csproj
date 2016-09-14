@@ -58,6 +58,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MyMiscHelpers\MyBindingHelper.cs" />
     <Compile Include="MyMiscHelpers\MyGenericsHelper.cs" />
     <Compile Include="MyMiscHelpers\MyWin32InteropHelper.cs" />
     <Compile Include="MyMiscHelpers\MyWin32PInvokeHelper.cs" />
@@ -78,7 +79,6 @@
     </Compile>
     <Compile Include="MyWpfHelpers\MyModernDialogHack.cs" />
     <Compile Include="MyWpfHelpers\MyModernWindowHack.cs" />
-    <Compile Include="MyWpfHelpers\MyWpfBindingHelper.cs" />
     <Compile Include="MyWpfHelpers\MyWpfControlHelper.cs" />
     <Compile Include="MyWpfHelpers\MyWpfMiscHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
