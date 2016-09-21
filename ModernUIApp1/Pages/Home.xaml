@@ -175,7 +175,9 @@
                 <Slider />
                 <ScrollBar Orientation="Horizontal" Minimum="0" Maximum="100" ViewportSize="20" LargeChange="10" SmallChange="1"/>
                 <!-- Expander には既定で MUI4WPF のテーマが用意されていない。しかし、どうやら Windows 7 の Aero では、囲み矢印の円の部分の Fill 色が透明になってしまうことがある模様。そうなると、Dark テーマでのマウスオーバー時に見づらくなる。 -->
-                <Expander Header="Expander" Foreground="{DynamicResource ItemText}"/>
+                <Expander Header="Expander" Foreground="{DynamicResource ItemText}">
+                    <TextBlock Text="hoge"/>
+                </Expander>
             </StackPanel>
             <StackPanel Margin="4">
                 <CheckBox Content="Slide-switch check1" IsChecked="True" Style="{StaticResource RoundSlideSwitchCheckBoxStyleKey}"/>

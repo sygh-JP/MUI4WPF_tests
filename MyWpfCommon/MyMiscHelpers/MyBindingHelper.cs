@@ -82,11 +82,11 @@ namespace MyBindingHelpers
 	}
 
 
-	// Modern UI と従来の UI とで外観を変えるだけにして、内部処理や機能は共通化できるようにするため、
+	// Modern UI と従来のデスクトップ UI とで外観を変えるだけにして、内部処理や機能は共通化できるようにするため、
 	// コマンドやデータ モデルをビューと分離して、バインディングを使う。
-	// System.Windows.Input.ICommand は WPF だけでなく、WinRT や Silverlight でも使える模様。
-
 	// http://blog.hiros-dot.net/?p=5742
+	// System.Windows.Input.ICommand は WPF だけでなく、WinRT や Silverlight でも使える模様。
+	// https://msdn.microsoft.com/ja-jp/library/hh563947(v=vs.110).aspx
 
 	public class DelegateCommand : System.Windows.Input.ICommand
 	{
