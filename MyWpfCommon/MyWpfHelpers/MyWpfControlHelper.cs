@@ -231,5 +231,125 @@ namespace MyWpfHelpers
 				Debug.WriteLine(err.Message);
 			}
 		}
+
+		public static void UnselectAllListItemIfHitTestFailed(ListBox listbox, MouseButtonEventArgs e)
+		{
+			// WPF の ListView は、アイテム以外の部分をクリックしても選択が解除されない。その対策を仕込む。
+			// HACK: 添付ビヘイビアにしておくと再利用性がよさそう。
+
+			// http://main.tinyjoker.net/Tech/CSharp/WPF/ListBox%A4%CE%A5%C0%A5%D6%A5%EB%A5%AF%A5%EA%A5%C3%A5%AF%A5%A4%A5%D9%A5%F3%A5%C8%A4%F2%A4%A6%A4%DE%A4%AF%BD%E8%CD%FD%A4%B9%A4%EB.html
+
+#if false
+			// 単一選択モードのみに対応。
+			var item = listbox.ItemContainerGenerator.ContainerFromItem(listbox.SelectedItem) as UIElement;
+			if (item != null && item.InputHitTest(e.GetPosition(item)) != null)
+			{
+				// 選択中のアイテム上でクリックされたとき。
+			}
+			else
+			{
+				// アイテム以外でクリックされたとき。
+				listbox.UnselectAll();
+			}
+#else
+			bool isClickedOnItem = false;
+			foreach (var sel in listbox.SelectedItems)
+			{
+				var item = listbox.ItemContainerGenerator.ContainerFromItem(sel) as UIElement;
+				if (item != null && item.InputHitTest(e.GetPosition(item)) != null)
+				{
+					isClickedOnItem = true;
+					break;
+				}
+			}
+			if (!isClickedOnItem)
+			{
+				listbox.UnselectAll();
+			}
+#endif
+		}
+
+		public static System.Windows.Rect GetWindowBoundsAsRect(Window window)
+		{
+			if (window.WindowState == System.Windows.WindowState.Maximized && !window.RestoreBounds.IsEmpty)
+			{
+				return window.RestoreBounds;
+			}
+			else if (window.WindowState == System.Windows.WindowState.Normal)
+			{
+				return new System.Windows.Rect(
+					window.Left, window.Top,
+					window.Width, window.Height);
+			}
+			else
+			{
+				return System.Windows.Rect.Empty;
+			}
+		}
+
+		public static bool SetWindowBounds(Window window, System.Windows.Rect winBounds)
+		{
+			if (!Double.IsNaN(winBounds.Width) && winBounds.Width > 0 &&
+				!Double.IsNaN(winBounds.Height) && winBounds.Height > 0)
+			{
+				window.Left = winBounds.X;
+				window.Top = winBounds.Y;
+				window.Width = winBounds.Width;
+				window.Height = winBounds.Height;
+				return true;
+			}
+			return false;
+		}
+
+		// Single.NaN or Double.NaN を int にキャストすると、Int32.MinValue になってしまうので要注意。
+
+		public static System.Windows.Int32Rect GetWindowBoundsAsInt32Rect(Window window)
+		{
+			if (window.WindowState == System.Windows.WindowState.Maximized && !window.RestoreBounds.IsEmpty)
+			{
+				return new System.Windows.Int32Rect(
+					(int)window.RestoreBounds.Left, (int)window.RestoreBounds.Top,
+					(int)window.RestoreBounds.Width, (int)window.RestoreBounds.Height);
+			}
+			else if (window.WindowState == System.Windows.WindowState.Normal)
+			{
+				return new System.Windows.Int32Rect(
+					(int)window.Left, (int)window.Top,
+					(int)window.Width, (int)window.Height);
+			}
+			else
+			{
+				return System.Windows.Int32Rect.Empty;
+			}
+		}
+
+		public static bool SetWindowBounds(Window window, System.Windows.Int32Rect winBounds)
+		{
+			if (winBounds.HasArea)
+			{
+				window.Left = winBounds.X;
+				window.Top = winBounds.Y;
+				window.Width = winBounds.Width;
+				window.Height = winBounds.Height;
+				return true;
+			}
+			return false;
+		}
+
+		public static void ShowOrActivateWindow(Window window)
+		{
+			if (window.Visibility != System.Windows.Visibility.Visible)
+			{
+				window.Show();
+			}
+			else if (window.WindowState == WindowState.Minimized)
+			{
+				SystemCommands.RestoreWindow(window);
+			}
+			else
+			{
+				window.Activate();
+			}
+		}
 	}
 }
