@@ -13,7 +13,7 @@ namespace MyWpfHelpers
 {
 	public static class MyModernWindowHack
 	{
-		public static void AdjustSystemCommandButtons(ModernWindow window)
+		public static void AdjustSystemCommandButtons(ModernWindow window, bool disablesBackButton = false)
 		{
 			//var list = new List<FrameworkElement>();
 			var list = new List<Button>();
@@ -80,6 +80,10 @@ namespace MyWpfHelpers
 						if (strCmdName == "BrowseBack")
 						{
 							v.ToolTip = "Back";
+							if (disablesBackButton)
+							{
+								v.Visibility = Visibility.Hidden;
+							}
 							return true;
 						}
 					}

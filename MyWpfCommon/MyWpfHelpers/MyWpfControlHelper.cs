@@ -234,7 +234,7 @@ namespace MyWpfHelpers
 
 		public static void UnselectAllListItemIfHitTestFailed(ListBox listbox, MouseButtonEventArgs e)
 		{
-			// WPF の ListView は、アイテム以外の部分をクリックしても選択が解除されない。その対策を仕込む。
+			// WPF の ListBox, ListView は、アイテム以外の部分をクリックしても選択が解除されない。その対策を仕込む。
 			// HACK: 添付ビヘイビアにしておくと再利用性がよさそう。
 
 			// http://main.tinyjoker.net/Tech/CSharp/WPF/ListBox%A4%CE%A5%C0%A5%D6%A5%EB%A5%AF%A5%EA%A5%C3%A5%AF%A5%A4%A5%D9%A5%F3%A5%C8%A4%F2%A4%A6%A4%DE%A4%AF%BD%E8%CD%FD%A4%B9%A4%EB.html
