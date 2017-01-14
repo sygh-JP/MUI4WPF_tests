@@ -211,7 +211,17 @@ namespace MyWpfHelpers
 			ModifyAllComboBoxInnerTextStyle(target, target.FindResource("StandardTextBoxContextMenuKey") as ContextMenu);
 		}
 
-		public static void UpdateAllBindingTargetsOfTextBoxText(UIElement parent)
+		public static bool UpdateAllBindingTargetsOfTextBoxText(UIElement parent)
+		{
+			return ScanAllBindingsOfTextBoxText(parent, (x) => x.UpdateTarget());
+		}
+
+		public static bool UpdateAllBindingSourcesOfTextBoxText(UIElement parent)
+		{
+			return ScanAllBindingsOfTextBoxText(parent, (x) => x.UpdateSource());
+		}
+
+		static bool ScanAllBindingsOfTextBoxText(UIElement parent, Action<BindingExpression> doFunc)
 		{
 			try
 			{
@@ -222,13 +232,15 @@ namespace MyWpfHelpers
 					var bindExpress = innerTextBox.GetBindingExpression(TextBox.TextProperty);
 					if (bindExpress != null)
 					{
-						bindExpress.UpdateTarget();
+						doFunc(bindExpress);
 					}
 				}
+				return true;
 			}
 			catch (Exception err)
 			{
 				Debug.WriteLine(err.Message);
+				return false;
 			}
 		}
 
