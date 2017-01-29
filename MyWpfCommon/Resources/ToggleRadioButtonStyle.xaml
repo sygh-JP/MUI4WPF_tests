@@ -5,6 +5,10 @@
     <!-- 外観だけ ToggleButton をベースとし、動作およびオブジェクトの型は RadioButton/CheckBox に準ずるようなスタイルを定義する。 -->
     <!-- x:Key を指定しない場合、新たな暗黙スタイルとなる。 -->
     <Style x:Key="ToggleRadioButtonStyleKey" TargetType="RadioButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+        <Style.Setters>
+            <Setter Property="BorderBrush" Value="DarkGray"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style.Setters>
         <Style.Triggers>
             <MultiTrigger>
                 <MultiTrigger.Conditions>

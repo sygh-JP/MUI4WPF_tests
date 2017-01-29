@@ -123,6 +123,7 @@
                 <ToggleButton Name="toggle2" Content="toggle2" IsChecked="True"/>
                 <RadioButton Name="tradio1" Content="tgl-radio1" Style="{StaticResource ToggleRadioButtonStyleKey}" IsChecked="True"/>
                 <RadioButton Name="tradio2" Content="tgl-radio2" Style="{StaticResource ToggleRadioButtonStyleKey}"/>
+                <CheckBox Name="tcheck1" Content="tgl-check1" Style="{StaticResource ToggleCheckBoxStyleKey}"/>
             </StackPanel>
             <StackPanel Margin="4">
                 <!-- アイコンのジオメトリを付けないと一見ラジオ ボタンに見える。 -->
