@@ -205,6 +205,9 @@ namespace MyWpfHelpers
 			}
 		}
 
+		// 通常の TextBox に関しては、XAML で Style を設定すれば対処可能だが、ComboBox 内部の TextBox に関してはそうはいかない。
+		// コードビハインドを明示的に書く必要がある。
+
 		public static void ModifyAllComboBoxContextMenuAsStandard(FrameworkElement target)
 		{
 			// 組み込みのリソースを使う。

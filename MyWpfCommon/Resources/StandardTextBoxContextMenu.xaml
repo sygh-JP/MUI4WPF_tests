@@ -1,0 +1,22 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    >
+    <!-- これらの調整用リソースは、コントロールやウィンドウごとに毎回定義するのは面倒なので、App.xaml で MergedDictionaries に加えておくとよい。 -->
+
+    <!--
+    Modern UI for WPF 1.0.6 では、コンテキスト メニューを明示的に設定しないかぎり、TextBox や ComboBox のコンテキスト メニューがまともな Modern スタイルにならない。
+    ほぼ WPF デフォルトの外観が使われる（違いはハイライトの色が変わるくらい）。また、標準と比べてメニューテキストのインデント位置が微妙にずれているなどの現象がみられる。
+    コントロールのインスタンスごとに、個別にコンテキスト メニューを属性構文などで逐一指定してもよいが、
+    TextBox のコンテキスト メニューは Window や UserControl の Resources に XAML コードでスタイルとして一括指定できる。
+    ただし ComboBox 内の TextBox のスタイルは XAML 指定できず、別途コード ビハインドで制御する必要がありそう。
+    また、コンテキスト メニュー内のコマンド説明ラベルは通例左寄せだが、右寄せ（TextAlignment="Right"）の TextBox 内でコンテキスト メニューを表示すると、
+    なぜかコンテキスト メニュー内のコマンド説明ラベルも右寄せになってしまう。一度右寄せになると、左寄せの TextBox で表示しても右寄せになってしまう模様。
+    MenuItem に HorizontalAlignment="Left" を指定するだけではうまく修正できない（ショートカット説明ラベルも併せて左寄せになってしまう）。
+    -->
+    <ContextMenu x:Key="StandardTextBoxContextMenuKey">
+        <MenuItem Command="ApplicationCommands.Cut" />
+        <MenuItem Command="ApplicationCommands.Copy" />
+        <MenuItem Command="ApplicationCommands.Paste" />
+    </ContextMenu>
+</ResourceDictionary>

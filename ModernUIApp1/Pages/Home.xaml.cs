@@ -236,7 +236,8 @@ namespace ModernUIApp1.Pages
 			{
 				_isFirstLoad = false;
 
-				// コンテキスト メニューは Modern UI for WPF だけではハイライトがカスタマイズされるだけなので、Elysium のすっきりしたスタイルを使う。
+				// コンテキスト メニューは MUI4WPF の既定スタイルを適用しただけではハイライト色がカスタマイズされるだけ。
+				// 明示的指定が必要。
 				// TextBox に関しては XAML 側で一括指定するが、
 				// ComboBox はコード ビハインドで対応。
 

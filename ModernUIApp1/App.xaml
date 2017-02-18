@@ -10,6 +10,7 @@
                 <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/ModernUI.xaml" />
                 <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/ModernUI.Light.xaml"/>
                 <ResourceDictionary Source="/MyWpfCommon;component/Resources/PartialModernUIIcons.xaml"/>
+                <ResourceDictionary Source="/MyWpfCommon;component/Resources/StandardTextBoxContextMenu.xaml"/>
                 <ResourceDictionary Source="/MyWpfCommon;component/Resources/ElysiumAppend.xaml"/>
                 <ResourceDictionary Source="/MyWpfCommon;component/Resources/MuiCheckBoxStyle.xaml"/>
                 <ResourceDictionary Source="/MyWpfCommon;component/Resources/MuiExpanderStyle.xaml"/>

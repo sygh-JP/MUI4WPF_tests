@@ -4,6 +4,7 @@
     xmlns:myconvs="clr-namespace:MyWpfConverters"
     >
     <!-- 再利用するコンバーターを定義。検索しやすさを考慮して、あえてクラス名とキー名を同じにする。 -->
+    <myconvs:IntToBinaryStringConverter x:Key="IntToBinaryStringConverter"/>
     <myconvs:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
     <myconvs:InverseNullableBooleanConverter x:Key="InverseNullableBooleanConverter"/>
     <myconvs:HalfDoubleConverter x:Key="HalfDoubleConverter"/>
