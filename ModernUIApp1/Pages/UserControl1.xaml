@@ -29,10 +29,13 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="10"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <TextBlock TextWrapping="Wrap" FontSize="14">
             This is my user-control as a page in <Bold>Modern UI for WPF</Bold> app.
         </TextBlock>
+        <Button Grid.Row="2" Name="buttonOpenImage" Content="Open Image..." HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="2" BorderBrush="DarkGray"/>
         <Expander Grid.Row="4" Header="Expander" ExpandDirection="Down" HorizontalContentAlignment="Left" IsExpanded="False" Style="{StaticResource MuiExpanderStyleKey}">
             <StackPanel Orientation="Vertical" Margin="10,2">
                 <Label Content="Context menu comparison test:"/>
@@ -52,5 +55,11 @@
             <TabItem Header="tab1">hoge</TabItem>
             <TabItem Header="tab2">fuga</TabItem>
         </TabControl>
+
+        <Border Grid.Row="8" BorderThickness="1" BorderBrush="DarkGray">
+            <Viewbox StretchDirection="DownOnly">
+                <Image Name="image1"/>
+            </Viewbox>
+        </Border>
     </Grid>
 </UserControl>

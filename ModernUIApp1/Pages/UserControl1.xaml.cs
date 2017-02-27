@@ -26,6 +26,11 @@ namespace ModernUIApp1.Pages
 
 			this.Loaded += UserControl1_Loaded;
 			this.Unloaded += UserControl1_Unloaded;
+
+			this.buttonOpenImage.Click += async (s, e) =>
+			{
+				await this.OpenImageByFileDialogAsync();
+			};
 		}
 
 		[System.Diagnostics.Conditional("DEBUG")]
@@ -73,6 +78,61 @@ namespace ModernUIApp1.Pages
 		public void OnNavigatingFrom(FirstFloor.ModernUI.Windows.Navigation.NavigatingCancelEventArgs e)
 		{
 			DebugWriteLineMemberName();
+		}
+
+		private async Task OpenImageByFileDialogAsync()
+		{
+			var fileDlg = new Microsoft.Win32.OpenFileDialog();
+			fileDlg.Filter = "All Image Files|*.png;*.gif;*.bmp;*.dib;*.jpg;*.jpeg;*.tif;*.tiff|"
+				+ "PNG Files|*.png|"
+				+ "GIF Files|*.gif|"
+				+ "BMP Files|*.bmp;*.dib|"
+				+ "JPEG Files|*.jpg;*.jpeg|"
+				+ "TIFF Files|*.tif;*.tiff|"
+				+ "All Files|*.*";
+
+			if (fileDlg.ShowDialog() == true)
+			{
+				try
+				{
+					this.IsEnabled = false;
+
+					var filePath = fileDlg.FileName;
+
+					// サブスレッドで画像ファイル読み込みを行なう。
+					var srcImage = await Task.Run(() =>
+					{
+						try
+						{
+							// フリーズしていないビットマップは別スレッドで操作できない。
+							return MyWpfHelpers.MyWpfImageHelper.CreateBitmapFromSharableFileStream(filePath, true, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+						}
+						finally
+						{
+							// メモリ リーク対策。async/await を使う場合はなくてもよさそう？
+							MyMiscHelpers.MyThreadHelper.InvokeShutdownCurrentThreadDispatcher();
+						}
+					});
+
+					var dpiScaleFactor = MyMiscHelpers.MyVisualUtility.GetDpiScaleFactor(this);
+					// 高 DPI 環境でもラスター画像だけは dot-by-dot で表示するため、画像サイズ（デバイス ピクセル）を論理ピクセルに変換する。
+					// BitmapSource.Width, BitmapSource.Height は使わない。
+					this.image1.Width = srcImage.PixelWidth / dpiScaleFactor.X;
+					this.image1.Height = srcImage.PixelHeight / dpiScaleFactor.Y;
+					this.image1.Source = srcImage;
+				}
+				catch (Exception ex)
+				{
+					MyWpfHelpers.MyModernDialogHack.ShowMessage(ex.Message, null, MessageBoxImage.Error);
+				}
+				finally
+				{
+					GC.Collect();
+					Console.WriteLine("Total GC Memory = {0} KB", GC.GetTotalMemory(true) / 1024);
+
+					this.IsEnabled = true;
+				}
+			}
 		}
 	}
 }
