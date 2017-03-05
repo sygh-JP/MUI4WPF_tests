@@ -18,6 +18,7 @@
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="home" Source="/Pages/Home.xaml" />
                 <mui:Link DisplayName="sub-page1" Source="/Pages/UserControl1.xaml" />
+                <mui:Link DisplayName="sub-page2" Source="/Pages/UserControl2.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
         <!--

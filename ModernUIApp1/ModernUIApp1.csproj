@@ -70,6 +70,9 @@
       <DependentUpon>Appearance.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Settings\AppearanceViewModel.cs" />
+    <Compile Include="Pages\UserControl2.xaml.cs">
+      <DependentUpon>UserControl2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -113,6 +116,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\UserControl1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\UserControl2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

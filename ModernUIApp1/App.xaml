@@ -13,6 +13,7 @@
                 <ResourceDictionary Source="/MyWpfCommon;component/Resources/StandardTextBoxContextMenu.xaml"/>
                 <ResourceDictionary Source="/MyWpfCommon;component/Resources/ElysiumAppend.xaml"/>
                 <ResourceDictionary Source="/MyWpfCommon;component/Resources/MuiCheckBoxStyle.xaml"/>
+                <ResourceDictionary Source="/MyWpfCommon;component/Resources/MuiListViewStyle.xaml"/>
                 <ResourceDictionary Source="/MyWpfCommon;component/Resources/MuiExpanderStyle.xaml"/>
                 <ResourceDictionary Source="/MyWpfCommon;component/Resources/MyCustomConverters.xaml"/>
                 <ResourceDictionary Source="/MyWpfCommon;component/Resources/SlideSwitchCheckBoxStyle.xaml"/>

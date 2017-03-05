@@ -1,0 +1,56 @@
+﻿<UserControl
+    x:Class="ModernUIApp1.Pages.UserControl2"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    mc:Ignorable="d" 
+    d:DesignWidth="300"
+    d:DesignHeight="300"
+    Background="{DynamicResource ResourceKey=WindowBackground}"
+    >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <CheckBox Grid.Row="0" Name="checkEnabledListView" Content="Enable ListView"/>
+        <Border Grid.Row="2" Name="border1" BorderBrush="DarkGray" BorderThickness="1">
+            <ListView Name="listview1" ItemsSource="{Binding}" IsEnabled="{Binding ElementName=checkEnabledListView, Path=IsChecked}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="B-Rect (X, Y, W, H) [px]">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextAlignment="Left">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="({0}, {1}, {2}, {3})">
+                                                <Binding Path="BoundingRect.X"/>
+                                                <Binding Path="BoundingRect.Y"/>
+                                                <Binding Path="BoundingRect.Width"/>
+                                                <Binding Path="BoundingRect.Height"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Area [px^2]">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextAlignment="Right" Text="{Binding Area}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Border>
+    </Grid>
+</UserControl>
