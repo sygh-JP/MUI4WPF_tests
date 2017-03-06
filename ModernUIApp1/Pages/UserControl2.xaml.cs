@@ -61,7 +61,7 @@ namespace ModernUIApp1.Pages
 namespace ModernUIApp1
 {
 	/// <summary>
-	/// Model 兼 ViewModel。
+	/// 簡易 ViewModel。
 	/// View へのバインディング後に動的にプロパティを変更する場合、INotifyPropertyChanged の実装が必要だが、
 	/// 今回は簡単のため実装しない。
 	/// </summary>

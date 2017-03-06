@@ -15,9 +15,9 @@
             <RowDefinition Height="5"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <CheckBox Grid.Row="0" Name="checkEnabledListView" Content="Enable ListView"/>
+        <CheckBox Grid.Row="0" Name="checkEnablesListView" Content="Enable ListView"/>
         <Border Grid.Row="2" Name="border1" BorderBrush="DarkGray" BorderThickness="1">
-            <ListView Name="listview1" ItemsSource="{Binding}" IsEnabled="{Binding ElementName=checkEnabledListView, Path=IsChecked}">
+            <ListView Name="listview1" ItemsSource="{Binding}" IsEnabled="{Binding ElementName=checkEnablesListView, Path=IsChecked}">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
