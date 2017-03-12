@@ -129,6 +129,8 @@
                 <!-- アイコンのジオメトリを付けないと一見ラジオ ボタンに見える。 -->
                 <mui:ModernButton Name="mbutton1" IconData="{StaticResource ModernInformationIconGeometryKey}" VerticalAlignment="Bottom" Content="modern button1" Background="Red" BorderThickness="1" BorderBrush="Gray"/>
                 <mui:ModernButton Name="mbutton2" IconData="{StaticResource ModernPeopleIconGeometryKey}" VerticalAlignment="Bottom" Content="modern button2" Background="Red" BorderThickness="1" BorderBrush="Gray"/>
+                <mui:ModernToggleButton Name="mtbutton1" IconData="{StaticResource ModernWarningIconGeometryKey}" VerticalAlignment="Bottom" Content="modern toggle button1" Background="Red" BorderThickness="1" BorderBrush="Gray"/>
+                <mui:ModernToggleButton Name="mtbutton2" IconData="{StaticResource ModernStopIconGeometryKey}" VerticalAlignment="Bottom" Content="modern toggle button2" Background="Red" BorderThickness="1" BorderBrush="Gray"/>
             </StackPanel>
             <Grid Margin="4">
                 <Grid.RowDefinitions>

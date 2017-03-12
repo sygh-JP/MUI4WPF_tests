@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:mui="http://firstfloorsoftware.com/ModernUI"
     xmlns:mybehavs="clr-namespace:MyWpfBehaviors;assembly=MyWpfCommon"
     mc:Ignorable="d" 
     d:DesignWidth="300"
@@ -35,6 +36,8 @@
         <TextBlock TextWrapping="Wrap" FontSize="14">
             This is my user-control as a page in <Bold>Modern UI for WPF</Bold> app.
         </TextBlock>
+        <!-- パーティクルの大きさはアニメーションしないほうが良いと思う。せっかくのプログレスリングだが、Windows 8.x/10 のプログレスリングとはデザインが異なるので、違和感を感じる。 -->
+        <mui:ModernProgressRing Grid.Row="1" IsActive="True"/>
         <Button Grid.Row="2" Name="buttonOpenImage" Content="Open Image..." HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="2" BorderBrush="DarkGray"/>
         <Expander Grid.Row="4" Header="Expander" ExpandDirection="Down" HorizontalContentAlignment="Left" IsExpanded="False" Style="{StaticResource MuiExpanderStyleKey}">
             <StackPanel Orientation="Vertical" Margin="10,2">
