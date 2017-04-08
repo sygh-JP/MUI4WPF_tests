@@ -38,6 +38,8 @@ namespace ModernUIApp1.Pages
 				list.Add(new TestDataModel() { BoundingRect = new Int32Rect(10, 20, 30, 40), Area = i });
 			}
 			this.listview1.DataContext = list;
+
+			this.stack1.DataContext = new MyVector2DViewModel();
 		}
 
 		private void UserControl2_Loaded(object sender, RoutedEventArgs e)
@@ -69,5 +71,40 @@ namespace ModernUIApp1
 	{
 		public Int32Rect BoundingRect { get; set; }
 		public int Area { get; set; }
+	}
+
+	class MyVector2DViewModel : MyBindingHelpers.MyNotifyPropertyChangedBase
+	{
+		double _x = 0;
+		double _y = 0;
+
+		public double X
+		{
+			get { return this._x; }
+			set
+			{
+				if (base.SetSingleProperty(ref this._x, value))
+				{
+					this.NotifyPropertyChanged(() => this.Length);
+				}
+			}
+		}
+
+		public double Y
+		{
+			get { return this._y; }
+			set
+			{
+				if (base.SetSingleProperty(ref this._y, value))
+				{
+					this.NotifyPropertyChanged(() => this.Length);
+				}
+			}
+		}
+
+		public double Length
+		{
+			get { return Math.Sqrt(this._x * this._x + this._y * this._y); }
+		}
 	}
 }

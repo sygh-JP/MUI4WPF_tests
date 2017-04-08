@@ -164,7 +164,7 @@ namespace MyWpfCtrls
 		}
 
 		/// <summary>
-		/// 0~100 の範囲。
+		/// ProgressBar にバインドするときは、0~100 の範囲。TaskbarItemInfo にバインドするときは、0.0~1.0 の範囲とする。
 		/// </summary>
 		public double ProgressValue
 		{
@@ -176,6 +176,31 @@ namespace MyWpfCtrls
 		{
 			get { return this._isIndeterminate; }
 			set { base.SetSingleProperty(ref this._isIndeterminate, value); }
+		}
+	}
+
+	public class MyTaskbarProgressViewModel : MyProgressViewModel
+	{
+		// Windows 7 以降の OS で、なおかつ Aero テーマ使用時に利用可能なタスク バーへのプログレス表示を想定。
+		// Windows 8 以降はクラシック テーマが廃止されているので、プログレス表示は確実になされることが保証されるが、
+		// Windows 10 Preview Build 10074 ではアプリを最小化したりして非アクティブになっているときのみプログレスが表示されるようになっている。
+		// この仕様だと、たとえばユーザーがアプリ A でメイン作業をしている間にアプリ B にてバックグラウンドで実行されているタスク進捗率をちら見で確認する、
+		// というようなおまけ用途程度にしか使えない。
+		// Windows 10 Preview Build 10130 では、アクティブ・非アクティブにかかわらずタスク バーにプログレスが表示されるようになっているが、
+		// これまでは左から右へ進行していたプログレスが、下から上へのプログレスになっている。
+		// また、これまで Normal のプログレス色は緑だったが、Win10 では白色になっている。
+		// いずれもこれまでと比べて直感性や視認性に欠ける気がする。
+		// 正直残念すぎる仕様変更だが、タスク バーでの進捗率表示機能は、メインとしては使わないほうがいいかもしれない。
+		// 必ずアプリのウィンドウ UI 上に従来通りのプログレス バーを明示的に設けておいたほうがいい。
+		// WPF だとバインディングを使えばいいので連動は比較的簡単だが……
+		// → 最終的に Windows 10 正式版ではこれまで同様のまともな仕様になった模様。
+
+		System.Windows.Shell.TaskbarItemProgressState _progressState = System.Windows.Shell.TaskbarItemProgressState.None;
+
+		public System.Windows.Shell.TaskbarItemProgressState ProgressState
+		{
+			get { return this._progressState; }
+			set { base.SetSingleProperty(ref this._progressState, value); }
 		}
 	}
 }

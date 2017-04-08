@@ -4,19 +4,35 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:mybehavs="clr-namespace:MyWpfBehaviors;assembly=MyWpfCommon"
     mc:Ignorable="d" 
-    d:DesignWidth="300"
     d:DesignHeight="300"
     Background="{DynamicResource ResourceKey=WindowBackground}"
     >
+    <UserControl.Resources>
+        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="ContextMenu" Value="{StaticResource StandardTextBoxContextMenuKey}" />
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="5"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="5"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <CheckBox Grid.Row="0" Name="checkEnablesListView" Content="Enable ListView"/>
-        <Border Grid.Row="2" Name="border1" BorderBrush="DarkGray" BorderThickness="1">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Name="stack1">
+            <TextBlock VerticalAlignment="Center" Text="Vector = ("/>
+            <TextBox Width="100" TextAlignment="Right" Text="{Binding Path=X}" mybehavs:TextBoxUpdatesBindingSourceOnEnterKeyDownBehavior.UpdatesBindingSourceOnEnterKeyDown="True" mybehavs:TextBoxIncDecBindingSourceOnArrowKeyDownBehavior.IncDecAmount="0.01;2"/>
+            <TextBlock VerticalAlignment="Center" Text=", "/>
+            <TextBox Width="100" TextAlignment="Right" Text="{Binding Path=Y}" mybehavs:TextBoxUpdatesBindingSourceOnEnterKeyDownBehavior.UpdatesBindingSourceOnEnterKeyDown="True" mybehavs:TextBoxIncDecBindingSourceOnArrowKeyDownBehavior.IncDecAmount="0.01;2"/>
+            <TextBlock VerticalAlignment="Center" Text="), Length = "/>
+            <TextBox Width="100" TextAlignment="Right" IsReadOnly="True" Text="{Binding Path=Length, Mode=OneWay, StringFormat={}{0:F3}}"/>
+        </StackPanel>
+        <CheckBox Grid.Row="2" Name="checkEnablesListView" Content="Enable ListView"/>
+        <Border Grid.Row="4" Name="border1" BorderBrush="DarkGray" BorderThickness="1">
             <ListView Name="listview1" ItemsSource="{Binding}" IsEnabled="{Binding ElementName=checkEnablesListView, Path=IsChecked}">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">

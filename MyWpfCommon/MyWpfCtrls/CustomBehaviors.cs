@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
+//using System.Windows.Input;
 using System.Windows.Media;
 
 namespace MyWpfBehaviors
@@ -123,7 +123,7 @@ namespace MyWpfBehaviors
 			}
 		}
 
-		private static void textBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+		private static void textBox_GotKeyboardFocus(object sender, System.Windows.Input.KeyboardFocusChangedEventArgs e)
 		{
 			// ジェネリクスはテンプレートとは違うのでこの場面では使えない。C# 4.0 以降の dynamic だと動的ダック タイピングできるが、今回は使わない。
 
@@ -137,7 +137,7 @@ namespace MyWpfBehaviors
 			}
 		}
 
-		private static void textBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+		private static void textBox_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
 			var textBox = sender as UIElement;
 			if (textBox == null) { return; }
@@ -149,6 +149,7 @@ namespace MyWpfBehaviors
 			}
 		}
 
+#if false
 		private static void textBox_GotFocus(object sender, RoutedEventArgs e)
 		{
 			if (sender is TextBoxBase)
@@ -160,8 +161,11 @@ namespace MyWpfBehaviors
 				((PasswordBox)sender).SelectAll();
 			}
 		}
+#endif
 	}
 #endif
+
+	// HACK: Esc キーでバインディング ターゲットを自動更新する（バインディング ソースの値に戻す）添付ビヘイビアも実装する？
 
 	/// <summary>
 	/// TextBox での Enter キー押下時にバインディング ソースを自動更新する添付ビヘイビア。
@@ -173,7 +177,7 @@ namespace MyWpfBehaviors
 				"UpdatesBindingSourceOnEnterKeyDown",
 				typeof(bool),
 				typeof(TextBoxUpdatesBindingSourceOnEnterKeyDownBehavior),
-				new UIPropertyMetadata(false, UpdatesBindingSourceOnEnterKeyDownChanged)
+				new UIPropertyMetadata(false, OnPropertyChanged)
 			);
 
 		[AttachedPropertyBrowsableForType(typeof(TextBox))]
@@ -188,7 +192,7 @@ namespace MyWpfBehaviors
 			obj.SetValue(UpdatesBindingSourceOnEnterKeyDownProperty, value);
 		}
 
-		private static void UpdatesBindingSourceOnEnterKeyDownChanged(DependencyObject sender, DependencyPropertyChangedEventArgs evt)
+		private static void OnPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs evt)
 		{
 			var textBox = sender as TextBox;
 			if (textBox == null)
@@ -196,14 +200,14 @@ namespace MyWpfBehaviors
 				return;
 			}
 
-			textBox.KeyDown -= UpdateBindingSourceOfTextBoxTextOnEnterKeyDown;
+			textBox.KeyDown -= textBox_KeyDown;
 			if ((bool)evt.NewValue)
 			{
-				textBox.KeyDown += UpdateBindingSourceOfTextBoxTextOnEnterKeyDown;
+				textBox.KeyDown += textBox_KeyDown;
 			}
 		}
 
-		private static void UpdateBindingSourceOfTextBoxTextOnEnterKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+		private static void textBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
 		{
 			if (e.Key == System.Windows.Input.Key.Enter)
 			{
@@ -215,6 +219,182 @@ namespace MyWpfBehaviors
 					if (binding != null)
 					{
 						binding.UpdateSource();
+					}
+				}
+			}
+		}
+	}
+
+	/// <summary>
+	/// TextBox での上下矢印キー押下時にバインディング ソースを数値として増減する添付ビヘイビア。Adobe Photoshop 風。
+	/// </summary>
+	public static class TextBoxIncDecBindingSourceOnArrowKeyDownBehavior
+	{
+		public static readonly DependencyProperty IncDecAmountProperty =
+			DependencyProperty.RegisterAttached(
+				"IncDecAmount",
+				typeof(string),
+				typeof(TextBoxIncDecBindingSourceOnArrowKeyDownBehavior),
+				new UIPropertyMetadata(String.Empty, OnPropertyChanged)
+			);
+
+		[AttachedPropertyBrowsableForType(typeof(TextBox))]
+		public static string GetIncDecAmount(DependencyObject obj)
+		{
+			return (string)obj.GetValue(IncDecAmountProperty);
+		}
+
+		[AttachedPropertyBrowsableForType(typeof(TextBox))]
+		public static void SetIncDecAmount(DependencyObject obj, string value)
+		{
+			obj.SetValue(IncDecAmountProperty, value);
+		}
+
+		private static void OnPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs evt)
+		{
+			var textBox = sender as TextBox;
+			if (textBox == null)
+			{
+				return;
+			}
+
+			// KeyDown では矢印キーを捕捉できない。
+			textBox.PreviewKeyDown -= textBox_PreviewKeyDown;
+			if (!String.IsNullOrEmpty((string)evt.NewValue))
+			{
+				textBox.PreviewKeyDown += textBox_PreviewKeyDown;
+			}
+		}
+
+		private static void textBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+			bool isUp = e.Key == System.Windows.Input.Key.Up;
+			bool isDown = e.Key == System.Windows.Input.Key.Down;
+			if (isUp || isDown)
+			{
+				var textBox = sender as TextBox;
+				Debug.Assert(textBox != null);
+				if (textBox != null)
+				{
+					// 数値型プロパティがバインディングされていることが前提。
+					var binding = textBox.GetBindingExpression(TextBox.TextProperty);
+					if (binding != null && binding.ResolvedSource != null)
+					{
+						var sourcePropertyInfo = binding.ResolvedSource.GetType().GetProperty(binding.ResolvedSourcePropertyName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+						Debug.Assert(sourcePropertyInfo != null);
+						var formats = GetIncDecAmount(textBox).Split(new[] { ';' });
+						// 最初のフィールド（増減量）は必ず指定されているという前提。丸め桁数はオプション。
+						// 浮動小数点数は例えば ±0.1 しても（10進数として）きれいな数にならないことがある。
+						// 直接入力時は有効桁数を制限したくないこともあるので、BindingBase.StringFormat は使わない。
+						Debug.Assert(formats.Length >= 1);
+						var strStep = formats[0];
+						var oldVal = sourcePropertyInfo.GetValue(binding.ResolvedSource);
+						// とりあえず組み込みの数値型をすべてサポート。
+						// 頻繁に使われる型との一致を先にチェックしたほうがよい。
+						// C# でも C++ のような静的ダックタイピングができれば……
+						if (oldVal is double)
+						{
+							var step = double.Parse(strStep);
+							var newVal = (double)oldVal;
+							if (isUp) { newVal += step; }
+							else if (isDown) { newVal -= step; }
+							if (formats.Length >= 2)
+							{
+								int digits = int.Parse(formats[1]);
+								newVal = Math.Round(newVal, digits);
+							}
+							sourcePropertyInfo.SetValue(binding.ResolvedSource, newVal);
+						}
+						else if (oldVal is float)
+						{
+							var step = float.Parse(strStep);
+							var newVal = (float)oldVal;
+							if (isUp) { newVal += step; }
+							else if (isDown) { newVal -= step; }
+							if (formats.Length >= 2)
+							{
+								int digits = int.Parse(formats[1]);
+								newVal = (float)Math.Round(newVal, digits);
+							}
+							sourcePropertyInfo.SetValue(binding.ResolvedSource, newVal);
+						}
+						else if (oldVal is decimal)
+						{
+							var step = decimal.Parse(strStep);
+							var newVal = (decimal)oldVal;
+							if (isUp) { newVal += step; }
+							else if (isDown) { newVal -= step; }
+							if (formats.Length >= 2)
+							{
+								int digits = int.Parse(formats[1]);
+								newVal = Math.Round(newVal, digits);
+							}
+							sourcePropertyInfo.SetValue(binding.ResolvedSource, newVal);
+						}
+						else if (oldVal is long)
+						{
+							var step = long.Parse(strStep);
+							var newVal = (long)oldVal;
+							if (isUp) { newVal += step; }
+							else if (isDown) { newVal -= step; }
+							sourcePropertyInfo.SetValue(binding.ResolvedSource, newVal);
+						}
+						else if (oldVal is ulong)
+						{
+							var step = ulong.Parse(strStep);
+							var newVal = (ulong)oldVal;
+							if (isUp) { newVal += step; }
+							else if (isDown) { newVal -= step; }
+							sourcePropertyInfo.SetValue(binding.ResolvedSource, newVal);
+						}
+						else if (oldVal is int)
+						{
+							var step = int.Parse(strStep);
+							var newVal = (int)oldVal;
+							if (isUp) { newVal += step; }
+							else if (isDown) { newVal -= step; }
+							sourcePropertyInfo.SetValue(binding.ResolvedSource, newVal);
+						}
+						else if (oldVal is uint)
+						{
+							var step = uint.Parse(strStep);
+							var newVal = (uint)oldVal;
+							if (isUp) { newVal += step; }
+							else if (isDown) { newVal -= step; }
+							sourcePropertyInfo.SetValue(binding.ResolvedSource, newVal);
+						}
+						else if (oldVal is short)
+						{
+							var step = short.Parse(strStep);
+							var newVal = (short)oldVal;
+							if (isUp) { newVal += step; }
+							else if (isDown) { newVal -= step; }
+							sourcePropertyInfo.SetValue(binding.ResolvedSource, newVal);
+						}
+						else if (oldVal is ushort)
+						{
+							var step = ushort.Parse(strStep);
+							var newVal = (ushort)oldVal;
+							if (isUp) { newVal += step; }
+							else if (isDown) { newVal -= step; }
+							sourcePropertyInfo.SetValue(binding.ResolvedSource, newVal);
+						}
+						else if (oldVal is sbyte)
+						{
+							var step = sbyte.Parse(strStep);
+							var newVal = (sbyte)oldVal;
+							if (isUp) { newVal += step; }
+							else if (isDown) { newVal -= step; }
+							sourcePropertyInfo.SetValue(binding.ResolvedSource, newVal);
+						}
+						else if (oldVal is byte)
+						{
+							var step = byte.Parse(strStep);
+							var newVal = (byte)oldVal;
+							if (isUp) { newVal += step; }
+							else if (isDown) { newVal -= step; }
+							sourcePropertyInfo.SetValue(binding.ResolvedSource, newVal);
+						}
 					}
 				}
 			}
@@ -359,7 +539,7 @@ namespace MyWpfBehaviors
 			{
 				DefaultValue = ScrollJumpType.None,
 				PropertyChangedCallback = KickScrollChanged,
-				BindsTwoWayByDefault = true
+				BindsTwoWayByDefault = true,
 			});
 
 		public static ScrollJumpType GetKickScroll(DependencyObject obj)
