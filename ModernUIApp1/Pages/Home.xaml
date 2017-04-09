@@ -106,7 +106,7 @@
                     </ToggleButton.Resources>
                 </ToggleButton>
             </StackPanel>
-            <StackPanel Margin="4">
+            <UniformGrid Margin="4" Rows="5" Columns="2">
                 <!--
                 MUI4WPF のボタンをマージンなしで並べると、特に Dark テーマのときに各要素がすべてくっついて見えるという欠陥がある。
                 ボタンとエディット ボックスの区別もテキストのアライメントの違いしかないので、
@@ -117,7 +117,8 @@
                 <Button Name="button3" Content="button3"/>
                 <Button Name="button4" Content="button4"/>
                 <Button Name="button5" Content="button5"/>
-            </StackPanel>
+                <Button Name="button6" Content="button6"/>
+            </UniformGrid>
             <StackPanel Margin="4">
                 <ToggleButton Name="toggle1" Content="toggle1" IsChecked="False"/>
                 <ToggleButton Name="toggle2" Content="toggle2" IsChecked="True"/>

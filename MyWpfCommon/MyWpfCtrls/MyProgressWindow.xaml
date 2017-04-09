@@ -13,7 +13,7 @@
     <Grid>
         <StackPanel VerticalAlignment="Center" Orientation="Vertical">
             <TextBlock Name="textblockDescription" Margin="12" TextWrapping="Wrap" Text="{Binding Path=Description}"/>
-            <ProgressBar Name="progressMain" Margin="12" Height="20" IsIndeterminate="{Binding Path=IsIndeterminate}" Value="{Binding Path=ProgressValue}"/>
+            <ProgressBar Name="progressMain" Margin="12" Height="20" IsIndeterminate="{Binding Path=IsIndeterminate}" Value="{Binding Path=ProgressValue}" Maximum="1"/>
         </StackPanel>
         <!-- ローカライズされたテキストにかかわらず、停止ボタンは必ず一定以上のサイズを確保する。 -->
         <Button Name="buttonStop" Content="Stop"

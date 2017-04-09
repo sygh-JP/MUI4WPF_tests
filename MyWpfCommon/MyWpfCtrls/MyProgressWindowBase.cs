@@ -164,8 +164,9 @@ namespace MyWpfCtrls
 		}
 
 		/// <summary>
-		/// ProgressBar にバインドするときは、0~100 の範囲。TaskbarItemInfo にバインドするときは、0.0~1.0 の範囲とする。
+		/// ProgressBar.Value だけでなく、TaskbarItemInfo.ProgressValue にバインドするときも考慮して、0.0~1.0 の範囲とする。
 		/// </summary>
+		/// <remarks>ProgressBar.Maximum の既定値は 100 だが、1 に変更することで対応できる。</remarks>
 		public double ProgressValue
 		{
 			get { return this._progressValue; }

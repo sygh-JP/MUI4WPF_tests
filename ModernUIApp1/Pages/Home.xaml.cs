@@ -110,21 +110,30 @@ namespace ModernUIApp1.Pages
 				// 自動折り返しのテスト。
 				MyWpfHelpers.MyModernDialogHack.ShowMessage(Poem.Flatten(Poem.AmenimoMakezuText), Poem.AmenimoMakezuTitle, buttonText: "閉じる(_C)");
 			};
-			this.button3.Click += this.ShowMessageAsync;
+			this.button3.Click += (s, e) =>
+			{
+				var taskDlg = MyWpfHelpers.MyModernDialogHack.CreateTaskDialog("Task dialog test", null, MessageBoxImage.Information);
+				taskDlg.IsVerificationCheckBoxVisible = true;
+				taskDlg.ShowDialog();
+				System.Diagnostics.Debug.WriteLine(taskDlg.VerificationCheckBoxState);
+			};
 			this.button4.Click += (s, e) =>
 			{
 				this._isModalProgressStopped = false;
 				var progWnd = new MyWpfCtrls.MyModernProgressWindow();
 				progWnd.Owner = Application.Current.MainWindow;
 				progWnd.Title = Application.Current.MainWindow.Title;
+				progWnd.IsStopButtonVisible = true;
 				progWnd.ProgressViewModel.Description = "Now waiting...";
 				progWnd.ProgressViewModel.StopCommand.ExecuteHandler += (_) => { this._isModalProgressStopped = true; };
+				progWnd.ProgressViewModel.IsIndeterminate = false;
 				progWnd.Loaded += async (_, __) =>
 				{
-					const int stepMillisec = 10;
+					const int stepMillisec = 30;
 					const int movingPeriodMillisec = 3000;
 					for (int i = 0; i < movingPeriodMillisec; i += stepMillisec)
 					{
+						progWnd.ProgressViewModel.ProgressValue = (double)i / movingPeriodMillisec;
 						await Task.Delay(stepMillisec);
 						if (this._isModalProgressStopped)
 						{
@@ -137,18 +146,42 @@ namespace ModernUIApp1.Pages
 					progWnd.EnforcedClose();
 				};
 				// モーダル ダイアログを表示。タスクは Loaded イベントにて非同期実行される。
-				// HACK: ダイアログが表示される前にタスクが開始・終了するとおかしなことになる。Loaded イベントではなく ContentRendered イベントを使う。
+				// HACK: ダイアログが表示される前にタスクが開始・終了するとおかしなことになる。
+				// 回避するためには、Loaded イベントではなく ContentRendered イベントを使う。
+				// もしくは、モードレスで対処。
 				progWnd.ShowDialog();
 				var dlgResult = progWnd.UserDialogResult;
 				MyWpfHelpers.MyModernDialogHack.ShowMessage("DialogResult = " + MyMiscHelpers.MyGenericsHelper.ConvertNullableToExplicitString(dlgResult), null);
 			};
-			this.button5.Click += (s, e) =>
+			this.button5.Click += async (s, e) =>
 			{
-				var taskDlg = MyWpfHelpers.MyModernDialogHack.CreateTaskDialog("Task dialog test", null, MessageBoxImage.Information);
-				taskDlg.IsVerificationCheckBoxVisible = true;
-				taskDlg.ShowDialog();
-				System.Diagnostics.Debug.WriteLine(taskDlg.VerificationCheckBoxState);
+				Application.Current.MainWindow.IsEnabled = false;
+				await ModelessProgressWindowTestAsync();
+				Application.Current.MainWindow.IsEnabled = true;
 			};
+			this.button6.Click += this.ShowMessageAsync;
+		}
+
+		static async Task ModelessProgressWindowTestAsync()
+		{
+			var progWnd = new MyWpfCtrls.MyModernProgressWindow();
+			progWnd.Owner = Application.Current.MainWindow;
+			progWnd.Title = Application.Current.MainWindow.Title;
+			progWnd.IsStopButtonVisible = false;
+			progWnd.ProgressViewModel.Description = "Now waiting...";
+			progWnd.ProgressViewModel.IsIndeterminate = true;
+
+			// 別にモーダルでなくても OK。ただし、モードレスであれば親が操作できるので、待機中は他の UI の有効/無効を真面目に制御しなければならない。
+			progWnd.Show();
+
+			try
+			{
+				await Task.Delay(2000);
+			}
+			finally
+			{
+				progWnd.EnforcedClose();
+			}
 		}
 
 		#region Progress Window
@@ -167,14 +200,16 @@ namespace ModernUIApp1.Pages
 				// ただし IsHitTestVisible を false にするだけだと、親ウィンドウのアクティブ化はできる（キー入力を受け付ける）ので注意。
 				// また、System.Windows.Window.IsEnabled はシステム コマンド ボタン（最小化・最大化・クローズなど）やシステム メニューなど、
 				// タイトル バー (WindowChrome) 機能を無効化するわけではないことに注意。
-				// MUI4WPF の ModernWindow であれば、システム コマンド ボタンの IsEnabled は Window.IsEnabled に影響を受けるので、
-				// うまく対応できるかもしれない。
+				// IsHitTestVisible に関しても同様で、タイトル バーのドラッグやシステム メニューは有効なまま。
+				// MUI4WPF の ModernWindow であれば、自前のシステム コマンド ボタン群の IsEnabled は Window.IsEnabled に影響を受けるので、
+				// システム コマンド ボタン群を経由した操作に関しては対処できるが、システム メニューやショートカット キー経由の操作には対処不能。
 				Application.Current.MainWindow.IsHitTestVisible = false;
 				this._progressWindow = new MyWpfCtrls.MyModernProgressWindow();
 				this._progressWindow.Owner = Application.Current.MainWindow;
-				this._progressWindow.ProgressViewModel.Description = description;
 				this._progressWindow.Title = Application.Current.MainWindow.Title;
 				this._progressWindow.IsStopButtonVisible = false;
+				this._progressWindow.ProgressViewModel.Description = description;
+				this._progressWindow.ProgressViewModel.IsIndeterminate = true;
 				this._progressWindow.Show();
 			});
 			return true;
@@ -197,8 +232,9 @@ namespace ModernUIApp1.Pages
 		private async void ShowMessageAsync(object sender, RoutedEventArgs e)
 		{
 			// 戻り値 void が許されるのはイベント ハンドラーだけ。
-
-			this.button3.IsEnabled = false;
+			var button = sender as Button;
+			System.Diagnostics.Debug.Assert(button != null);
+			button.IsEnabled = false;
 
 			// Task.Delay() は最初から非同期メソッドなので別に Task.Run() でラップする必要はないが、
 			// サブスレッドから直接待機ウィンドウやメッセージ ダイアログを表示するテストのためにあえてラップする。
@@ -224,7 +260,7 @@ namespace ModernUIApp1.Pages
 			// await の既定の処理だと、Task.ConfigureAwait(true) が暗黙的に呼び出される。
 			// 結果として、コンテキストの復帰が行なわれ、呼び出しスレッドに戻ってくる。
 			System.Diagnostics.Debug.WriteLine("Completed.");
-			this.button3.IsEnabled = true;
+			button.IsEnabled = true;
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
