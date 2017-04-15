@@ -33,12 +33,7 @@
         </StackPanel>
         <CheckBox Grid.Row="2" Name="checkEnablesListView" Content="Enable ListView"/>
         <Border Grid.Row="4" Name="border1" BorderBrush="DarkGray" BorderThickness="1">
-            <ListView Name="listview1" ItemsSource="{Binding}" IsEnabled="{Binding ElementName=checkEnablesListView, Path=IsChecked}">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
+            <ListView Name="listview1" ItemsSource="{Binding}" IsEnabled="{Binding ElementName=checkEnablesListView, Path=IsChecked}" ItemContainerStyle="{StaticResource MuiListViewItemStyleKey}">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="B-Rect (X, Y, W, H) [px]">
@@ -61,6 +56,20 @@
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock TextAlignment="Right" Text="{Binding Area}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="TextBox">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Width="100" Text="test"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="CheckBox">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox HorizontalAlignment="Center"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

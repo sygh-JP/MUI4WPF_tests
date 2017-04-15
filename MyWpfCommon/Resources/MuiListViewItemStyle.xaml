@@ -1,0 +1,34 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    >
+    <Style x:Key="MuiListViewItemStyleKey" TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <!-- Margin は使わない。マウスオーバーに反応しない隙間を作らないようにするため。 -->
+                    <Border x:Name="ListBoxItemControlTemplateBorder" Padding="1" BorderThickness="1" BorderBrush="Transparent">
+                        <GridViewRowPresenter />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="False"/>
+                                <Condition Property="IsSelected" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="ListBoxItemControlTemplateBorder" Property="Background" Value="Transparent"/>
+                        </MultiTrigger>
+                        <!-- "Accent" だと強すぎるので、半透明の "WindowBorder" に抑える。 -->
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="ListBoxItemControlTemplateBorder" Property="Background" Value="{DynamicResource WindowBorder}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ListBoxItemControlTemplateBorder" Property="Background" Value="{DynamicResource Accent}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
