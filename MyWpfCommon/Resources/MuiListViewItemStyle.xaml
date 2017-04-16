@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     >
     <Style x:Key="MuiListViewItemStyleKey" TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
+        <!-- Stretch 指定はアイテムのアライメント指定をできるようにするために必要。 -->
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -17,12 +18,14 @@
                                 <Condition Property="IsMouseOver" Value="False"/>
                                 <Condition Property="IsSelected" Value="False"/>
                             </MultiTrigger.Conditions>
+                            <!-- Transparent を指定すれば交差判定が発生する。 -->
                             <Setter TargetName="ListBoxItemControlTemplateBorder" Property="Background" Value="Transparent"/>
                         </MultiTrigger>
-                        <!-- "Accent" だと強すぎるので、半透明の "WindowBorder" に抑える。 -->
+                        <!-- "Accent" だと主張が強すぎる（Dark テーマのとき白色文字との相性が悪い）ので、半透明の "WindowBorder" に抑える。 -->
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="ListBoxItemControlTemplateBorder" Property="Background" Value="{DynamicResource WindowBorder}"/>
                         </Trigger>
+                        <!-- MUI4WPF 既定だと、Dark テーマのとき、リスト行に入った CheckBox をマウスオーバーしたときにリスト行の背景と同化して分かりづらい。 -->
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="ListBoxItemControlTemplateBorder" Property="Background" Value="{DynamicResource Accent}"/>
                         </Trigger>

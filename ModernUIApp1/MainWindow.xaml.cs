@@ -18,6 +18,13 @@ using System.Windows.Shapes;
 // ハックしてカスタマイズするか、別の MyModernDialog を作るか、もしくは Windows API Code Pack などを活用して
 // Vista 以降に実装されているタスク ダイアログを活用するなりしたほうがいい。
 // WPF 標準の MessageBox は ModernDialog よりはマシだが、ただの Win32 P/Invoke なのでデザインがいまいち。訴求力がない。
+// 
+// MUI4WPF のアプリケーション プロジェクト テンプレート (VSIX) が公開されている。
+// https://marketplace.visualstudio.com/items?itemName=KoenZwikstra.ModernUIforWPFTemplates
+// しかし、このプロジェクト テンプレートを使って作成した場合、*.csproj に以下のタグが欠如しているために、
+// プロジェクトに Visual Studio のウィザードで WPF のウィンドウやリソース ディクショナリなどを追加することができない。
+// <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+// *.csproj の手動修正が必要。
 
 namespace ModernUIApp1
 {
