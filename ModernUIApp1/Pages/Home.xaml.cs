@@ -151,7 +151,7 @@ namespace ModernUIApp1.Pages
 				// もしくは、モードレスで対処。
 				progWnd.ShowDialog();
 				var dlgResult = progWnd.UserDialogResult;
-				MyWpfHelpers.MyModernDialogHack.ShowMessage("DialogResult = " + MyMiscHelpers.MyGenericsHelper.ConvertNullableToExplicitString(dlgResult), null);
+				MyWpfHelpers.MyModernDialogHack.ShowMessage("DialogResult = " + MyMiscHelpers.MyGenericsHelper.ConvertToLiteralNullIfNull(dlgResult), null);
 			};
 			this.button5.Click += async (s, e) =>
 			{
