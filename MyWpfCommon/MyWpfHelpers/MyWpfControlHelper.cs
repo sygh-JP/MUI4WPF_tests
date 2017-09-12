@@ -131,7 +131,7 @@ namespace MyWpfHelpers
 			}
 		}
 
-		public static void ModifyAllTextBoxStyle(UIElement parent, ContextMenu contextMenu)
+		public static void ModifyAllTextBoxStyle(UIElement parent, ContextMenu contextMenu, string resourceNameCaretBrush)
 		{
 			try
 			{
@@ -144,6 +144,10 @@ namespace MyWpfHelpers
 					var style = new Style(typeof(TextBox), innerTextBox.Style);
 					style.Setters.Add(new Setter(TextBox.ContextMenuProperty, contextMenu));
 					innerTextBox.Style = style;
+					if (!String.IsNullOrEmpty(resourceNameCaretBrush))
+					{
+						innerTextBox.SetResourceReference(TextBox.CaretBrushProperty, resourceNameCaretBrush);
+					}
 				}
 
 #if false
@@ -188,7 +192,7 @@ namespace MyWpfHelpers
 			}
 		}
 
-		public static void ModifyAllComboBoxInnerTextStyle(UIElement parent, ContextMenu contextMenu)
+		public static void ModifyAllComboBoxInnerTextStyle(UIElement parent, ContextMenu contextMenu, string resourceNameCaretBrush)
 		{
 			try
 			{
@@ -196,7 +200,7 @@ namespace MyWpfHelpers
 				SearchAllVisualChildrenRecursively(parent, visualComboBoxList);
 				foreach (var innerComboBox in visualComboBoxList)
 				{
-					ModifyAllTextBoxStyle(innerComboBox, contextMenu);
+					ModifyAllTextBoxStyle(innerComboBox, contextMenu, resourceNameCaretBrush);
 				}
 			}
 			catch (Exception err)
@@ -210,8 +214,10 @@ namespace MyWpfHelpers
 
 		public static void ModifyAllComboBoxContextMenuAsStandard(FrameworkElement target)
 		{
-			// 組み込みのリソースを使う。
-			ModifyAllComboBoxInnerTextStyle(target, target.FindResource("StandardTextBoxContextMenuKey") as ContextMenu);
+			// 定義済みのリソースを使う。
+			// MUI4WPF の ComboBox は、コンテキスト メニューに Modern スタイルが正しく適用されない。明示的に設定する必要がある。
+			// また、Dark テーマのときにもキャレットが黒のままで見づらい。色を追従させる必要がある。
+			ModifyAllComboBoxInnerTextStyle(target, target.FindResource("StandardTextBoxContextMenuKey") as ContextMenu, "WindowText");
 		}
 
 		public static bool UpdateAllBindingTargetsOfTextBoxText(UIElement parent)
@@ -229,7 +235,7 @@ namespace MyWpfHelpers
 			try
 			{
 				var visualTextBoxList = new List<TextBox>();
-				MyWpfHelpers.MyWpfControlHelper.SearchAllVisualChildrenRecursively(parent, visualTextBoxList);
+				SearchAllVisualChildrenRecursively(parent, visualTextBoxList);
 				foreach (var innerTextBox in visualTextBoxList)
 				{
 					var bindExpress = innerTextBox.GetBindingExpression(TextBox.TextProperty);
