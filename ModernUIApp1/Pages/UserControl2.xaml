@@ -22,6 +22,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="5"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" Name="stack1">
             <TextBlock VerticalAlignment="Center" Text="Vector = ("/>
@@ -32,7 +34,7 @@
             <TextBox Width="100" TextAlignment="Right" IsReadOnly="True" Text="{Binding Path=Length, Mode=OneWay, StringFormat={}{0:F3}}"/>
         </StackPanel>
         <CheckBox Grid.Row="2" Name="checkEnablesListView" Content="Enable ListView"/>
-        <Border Grid.Row="4" Name="border1" BorderBrush="DarkGray" BorderThickness="1">
+        <Border Grid.Row="4" BorderBrush="DarkGray" BorderThickness="1">
             <ListView Name="listview1" ItemsSource="{Binding}" IsEnabled="{Binding ElementName=checkEnablesListView, Path=IsChecked}" ItemContainerStyle="{StaticResource MuiListViewItemStyleKey}">
                 <ListView.View>
                     <GridView>
@@ -76,6 +78,9 @@
                     </GridView>
                 </ListView.View>
             </ListView>
+        </Border>
+        <Border Grid.Row="6" BorderBrush="DarkGray" BorderThickness="1">
+            <ListBox Name="listbox1" ItemsSource="{Binding}" IsEnabled="{Binding ElementName=checkEnablesListView, Path=IsChecked}"  DisplayMemberPath="Name" SelectionMode="Extended" ItemContainerStyle="{StaticResource MuiListBoxItemStyleKey}"/>
         </Border>
     </Grid>
 </UserControl>

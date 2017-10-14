@@ -5,7 +5,7 @@
     <Style x:Key="MuiListViewItemStyleKey" TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
         <!-- Stretch 指定はアイテムのアライメント指定をできるようにするために必要。 -->
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-        <!-- ListBox や ListView では、Ctrl キーを押しながら上下矢印キーを押すと、選択状態を変えずにフォーカス（カーソル）だけを動かすことができる。これにより、キーボードだけで飛び飛びの選択をしたり、選択を解除したりすることもできる。しかし MUI4WPF デフォルトでは FocusVisualStyle が空 {x:Null} になっていてフォーカスが見えないので、適切な Style を明示的に設定する。 -->
+        <!-- ListBox や ListView では、Ctrl キーを押しながら上下矢印キーを押すと、選択状態を変えずにフォーカス（カーソル）だけを動かすことができる。さらに、スペースキーで選択・選択解除ができる。これにより、キーボードだけで飛び飛びの選択をしたり、選択を解除したりすることもできる。しかし MUI4WPF デフォルトでは FocusVisualStyle が空 {x:Null} になっていてフォーカスが見えないので、適切な Style を明示的に設定する。 -->
         <Setter Property="FocusVisualStyle">
             <Setter.Value>
                 <Style>
@@ -42,6 +42,64 @@
                         <!-- MUI4WPF 既定だと、Dark テーマのとき、リスト行に入った CheckBox をマウスオーバーしたときにリスト行の背景と同化して分かりづらい。 -->
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="ListBoxItemControlTemplateBorder" Property="Background" Value="{DynamicResource Accent}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <!-- MUI4WPF の "FirstFloor.ModernUI/Shared/Assets/ListBox.xaml" の FlatListBoxItem を参考にした。 -->
+    <Style x:Key="MuiListBoxItemStyleKey" TargetType="ListBoxItem">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource ItemText}" />
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="Padding" Value="1"/>
+        <Setter Property="FocusVisualStyle">
+            <Setter.Value>
+                <Style>
+                    <Setter Property="Control.Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <Rectangle IsHitTestVisible="False" StrokeThickness="1" SnapsToDevicePixels="True" Stroke="{DynamicResource Accent}"/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border Name="ListBoxItemControlTemplateBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="True">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="False"/>
+                                <Condition Property="IsSelected" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="ListBoxItemControlTemplateBorder" Property="Background" Value="Transparent"/>
+                        </MultiTrigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="ListBoxItemControlTemplateBorder" Property="Background" Value="{DynamicResource WindowBorder}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ListBoxItemControlTemplateBorder" Property="Background" Value="{DynamicResource Accent}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource ItemTextDisabled}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

@@ -30,21 +30,27 @@ namespace ModernUIApp1.Pages
 				MyWpfHelpers.MyWpfControlHelper.UnselectAllListItemIfHitTestFailed(this.listview1, e);
 			};
 
+			this.listbox1.MouseLeftButtonUp += (s, e) =>
+			{
+				MyWpfHelpers.MyWpfControlHelper.UnselectAllListItemIfHitTestFailed(this.listbox1, e);
+			};
+
 			this.Loaded += UserControl2_Loaded;
 
 			var list = new ObservableCollection<TestDataModel>();
 			for (int i = 0; i < 30; ++i)
 			{
-				list.Add(new TestDataModel() { BoundingRect = new Int32Rect(10, 20, 30, 40), Area = i });
+				list.Add(new TestDataModel() { Name = "item " + i.ToString("D2"), BoundingRect = new Int32Rect(10, 20, 30, 40), Area = i });
 			}
 			this.listview1.DataContext = list;
+			this.listbox1.DataContext = list;
 
 			this.stack1.DataContext = new MyVector2DViewModel();
 		}
 
 		private void UserControl2_Loaded(object sender, RoutedEventArgs e)
 		{
-			//EnumSubVisuals(this.border1);
+			//EnumSubVisuals(this.listview1);
 		}
 
 		static void EnumSubVisuals(Visual parent)
@@ -69,6 +75,7 @@ namespace ModernUIApp1
 	/// </summary>
 	class TestDataModel
 	{
+		public string Name { get; set; }
 		public Int32Rect BoundingRect { get; set; }
 		public int Area { get; set; }
 	}
