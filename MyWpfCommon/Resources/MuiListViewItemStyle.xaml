@@ -5,6 +5,20 @@
     <Style x:Key="MuiListViewItemStyleKey" TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
         <!-- Stretch 指定はアイテムのアライメント指定をできるようにするために必要。 -->
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <!-- ListBox や ListView では、Ctrl キーを押しながら上下矢印キーを押すと、選択状態を変えずにフォーカス（カーソル）だけを動かすことができる。これにより、キーボードだけで飛び飛びの選択をしたり、選択を解除したりすることもできる。しかし MUI4WPF デフォルトでは FocusVisualStyle が空 {x:Null} になっていてフォーカスが見えないので、適切な Style を明示的に設定する。 -->
+        <Setter Property="FocusVisualStyle">
+            <Setter.Value>
+                <Style>
+                    <Setter Property="Control.Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <Rectangle IsHitTestVisible="False" StrokeThickness="1" SnapsToDevicePixels="True" Stroke="{DynamicResource Accent}"/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListBoxItem">
