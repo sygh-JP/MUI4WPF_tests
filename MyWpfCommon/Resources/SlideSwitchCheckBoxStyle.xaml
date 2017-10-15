@@ -4,11 +4,24 @@
     >
     <!-- iOS/Windows 10 ライクなスライドスイッチ式チェックボックス。Android でいう Switch 要素。MUI4WPF と調和する Modern スタイルにしている。 -->
     <!-- WinRT には Windows.UI.Xaml.Controls.ToggleSwitch が存在するが、Windows 8.x では矩形の外観だった。 -->
-    <!-- HACK: ON のときの背景色を添付プロパティなどで変更できるといいかもしれない。ON/OFF 文字色とのコントラストも考慮する必要はあるが…… -->
+    <!-- HACK: ON のときの背景色を添付プロパティや TemplateBinding などで変更できるといいかもしれない。ON/OFF 文字色とのコントラストも考慮する必要はあるが…… -->
     <!-- 参考: http://stackoverflow.com/questions/865767/slider-on-off-switch-in-wpf -->
     <!-- TODO: Android 系や Win8.x 系の矩形外観も悪くないので、別途 SquareSlideSwitchCheckBoxStyleKey として実装してみる。 -->
     <Style x:Key="RoundSlideSwitchCheckBoxStyleKey" TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
         <Setter Property="Foreground" Value="{DynamicResource ItemText}"/>
+        <Setter Property="FocusVisualStyle">
+            <Setter.Value>
+                <Style>
+                    <Setter Property="Control.Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <Rectangle IsHitTestVisible="False" StrokeThickness="1" SnapsToDevicePixels="True" Stroke="{DynamicResource Accent}"/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type CheckBox}">

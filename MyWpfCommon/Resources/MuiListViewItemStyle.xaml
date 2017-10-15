@@ -43,6 +43,9 @@
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="ListBoxItemControlTemplateBorder" Property="Background" Value="{DynamicResource Accent}"/>
                         </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource ItemTextDisabled}"/>
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

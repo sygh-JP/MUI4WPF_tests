@@ -19,6 +19,7 @@
     https://msdn.microsoft.com/en-us/library/ms753296.aspx
     やはり MUI4WPF に合わせて ControlTemplate をきちんと作り込むのが正解。
     -->
+    <!-- TODO: FocusVisualStyle の設定。 -->
 
     <Style x:Key="MuiExpanderStyleKey" TargetType="Expander" BasedOn="{StaticResource {x:Type Expander}}">
         <Setter Property="Foreground" Value="{DynamicResource ItemText}" />
