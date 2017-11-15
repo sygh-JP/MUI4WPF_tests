@@ -9,9 +9,10 @@
     WindowStyle="SingleBorderWindow"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
-    Width="400" Height="220"
+    Width="400" Height="240"
     WindowStartupLocation="CenterOwner"
     >
+    <!-- Window.SizeToContent プロパティにて、コンテンツサイズに合わせてウィンドウサイズを自動決定することもできるが、OS デフォルトのウィンドウクロームを表示しない場合、描画問題を起こすことがあるので使わない。 -->
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0"
                       ResizeBorderThickness="0" />
@@ -47,27 +48,33 @@
     <Border BorderThickness="2" BorderBrush="DarkGray" Background="{DynamicResource ResourceKey=WindowBackground}">
         <Border BorderThickness="2" BorderBrush="{Binding Path=BorderBrush, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}">
             <Grid>
-                <TextBlock VerticalAlignment="Top" Padding="12,8"
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" VerticalAlignment="Top" Padding="12,8"
                        FontWeight="Bold"
                        Foreground="White"
                        Background="{DynamicResource ResourceKey=WindowBorderActive}"
                        Text="{Binding Path=Title, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"/>
-                <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-                    <TextBlock Name="textblockDescription" Margin="12" TextWrapping="Wrap" Text="{Binding Path=Description}" Foreground="{DynamicResource ResourceKey=WindowText}"/>
-                    <ProgressBar Name="progressMain" Margin="12" Height="20" KeyboardNavigation.TabNavigation="None" IsIndeterminate="{Binding Path=IsIndeterminate}" Value="{Binding Path=ProgressValue}" Maximum="1"/>
-                </StackPanel>
+                <!-- 3行くらいまでは表示できる高さを予約しておく。また、テキスト量に応じてコントロールの位置が変動しないようにする。 -->
+                <TextBlock Grid.Row="2" Name="textblockDescription" Margin="12,0" Height="54" TextWrapping="Wrap" Text="{Binding Path=Description}" Foreground="{DynamicResource ResourceKey=WindowText}"/>
+                <ProgressBar Grid.Row="4" Name="progressMain" Margin="12,0" Height="20" KeyboardNavigation.TabNavigation="None" IsIndeterminate="{Binding Path=IsIndeterminate}" Value="{Binding Path=ProgressValue}" Maximum="1"/>
                 <!-- ローカライズされたテキストにかかわらず、停止ボタンは必ず一定以上のサイズを確保する。 -->
                 <!--
                 Enter キーを連打してしまった場合に Stop してしまわないようにするため、IsDefault は True にしないが、
                 Esc キーで緊急停止することはできるようにするため、IsCancel は True にしておく。
                 -->
-                <Button Name="buttonStop" Content="Stop"
-                        MinWidth="100" Padding="10,4"
+                <Button Grid.Row="6" Name="buttonStop" Content="Stop" IsCancel="True"
+                        MinWidth="100" Padding="10,4" Margin="12,0" HorizontalAlignment="Center"
                         BorderBrush="DarkGray" BorderThickness="2"
-                        HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="12"
-                        IsCancel="True"
-                        Visibility="{Binding Path=StopButtonVisibility}"
-                        Command="{Binding Path=StopCommand}"/>
+                        Visibility="{Binding Path=StopButtonVisibility}" Command="{Binding Path=StopCommand}"/>
             </Grid>
         </Border>
     </Border>

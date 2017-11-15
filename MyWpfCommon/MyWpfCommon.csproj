@@ -67,6 +67,7 @@
     </Compile>
     <Compile Include="MyWpfCtrls\CustomBehaviors.cs" />
     <Compile Include="MyWpfCtrls\CustomConverters.cs" />
+    <Compile Include="MyWpfCtrls\CustomProperties.cs" />
     <Compile Include="MyWpfCtrls\MyModernTaskDialog.xaml.cs">
       <DependentUpon>MyModernTaskDialog.xaml</DependentUpon>
     </Compile>
