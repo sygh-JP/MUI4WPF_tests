@@ -2,8 +2,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     >
-    <!-- BasedOn を指定しない場合、中途半端に標準外観（たとえば Windows 7 の場合は Aero）になってしまう。 -->
-    <Style x:Key="MuiListViewItemStyleKey" TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
+    <!-- 外観を完全に自前で定義するので、BasedOn の指定は不要。 -->
+    <Style x:Key="MuiListViewItemStyleKey" TargetType="ListViewItem">
         <!-- Stretch 指定はアイテムのアライメント指定をできるようにするために必要。 -->
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <!-- ListBox や ListView では、Ctrl キーを押しながら上下矢印キーを押すと、選択状態を変えずにフォーカス（カーソル）だけを動かすことができる。さらに、スペースキーで選択・選択解除ができる。これにより、キーボードだけで飛び飛びの選択をしたり、選択を解除したりすることもできる。しかし MUI4WPF デフォルトでは FocusVisualStyle が空 {x:Null} になっていてフォーカスが見えないので、適切な Style を明示的に設定する。 -->

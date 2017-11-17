@@ -23,7 +23,7 @@ namespace ModernUIApp1.Pages
 	{
 		bool _isFirstLoad = true;
 
-		MyWpfCtrls.MyModernProgressWindow _progressWindow = null;
+		readonly MyWpfCtrls.MyProgressWindowSimpleWrapper _progressWindowWrapper = new MyWpfCtrls.MyProgressWindowSimpleWrapper();
 		MyWpfCtrls.BalloonToolTipProxy _balloonToolTipProxy = null;
 
 		volatile bool _isModalProgressStopped = false;
@@ -184,50 +184,24 @@ namespace ModernUIApp1.Pages
 			}
 		}
 
-		#region Progress Window
 		bool InvokeShowProgressWindow(string description)
 		{
-			if (this._progressWindow != null)
-			{
-				return false;
-			}
 			// WPF 4.5 の Dispatcher.Invoke() は Action を受け取るオーバーロードがあるため、
 			// 引数なし、戻り値なしのラムダ式を暗黙的に Action デリゲートに変換できるが、WPF 4.0 以前では不可能らしい。
-			// 明示的に Action コンストラクタを呼んで Delegate として渡す必要がある。
-			this.Dispatcher.Invoke(() =>
+			// 匿名メソッドを使うか、明示的に Action コンストラクタを呼んで Delegate として渡す必要があった。
+			return this.Dispatcher.Invoke(() =>
 			{
-				// モーダル ウィンドウではないが、親は操作できないようにして疑似的にモーダルとする。
-				// ただし IsHitTestVisible を false にするだけだと、親ウィンドウのアクティブ化はできる（キー入力を受け付ける）ので注意。
-				// また、System.Windows.Window.IsEnabled はシステム コマンド ボタン（最小化・最大化・クローズなど）やシステム メニューなど、
-				// タイトル バー (WindowChrome) 機能を無効化するわけではないことに注意。
-				// IsHitTestVisible に関しても同様で、タイトル バーのドラッグやシステム メニューは有効なまま。
-				// MUI4WPF の ModernWindow であれば、自前のシステム コマンド ボタン群の IsEnabled は Window.IsEnabled に影響を受けるので、
-				// システム コマンド ボタン群を経由した操作に関しては対処できるが、システム メニューやショートカット キー経由の操作には対処不能。
-				Application.Current.MainWindow.IsHitTestVisible = false;
-				this._progressWindow = new MyWpfCtrls.MyModernProgressWindow();
-				this._progressWindow.Owner = Application.Current.MainWindow;
-				this._progressWindow.Title = Application.Current.MainWindow.Title;
-				this._progressWindow.IsStopButtonVisible = false;
-				this._progressWindow.ProgressViewModel.Description = description;
-				this._progressWindow.ProgressViewModel.IsIndeterminate = true;
-				this._progressWindow.Show();
+				return this._progressWindowWrapper.ShowProgressWindow<MyWpfCtrls.MyModernProgressWindow>(description);
 			});
-			return true;
 		}
 
 		void InvokeHideProgressWindow()
 		{
 			this.Dispatcher.Invoke(() =>
 			{
-				if (this._progressWindow != null)
-				{
-					this._progressWindow.EnforcedClose();
-					this._progressWindow = null;
-				}
-				Application.Current.MainWindow.IsHitTestVisible = true;
+				this._progressWindowWrapper.HideProgressWindow();
 			});
 		}
-		#endregion
 
 		private async void ShowMessageAsync(object sender, RoutedEventArgs e)
 		{

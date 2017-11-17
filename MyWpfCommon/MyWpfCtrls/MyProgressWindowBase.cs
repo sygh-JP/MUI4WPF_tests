@@ -129,6 +129,64 @@ namespace MyWpfCtrls
 		}
 	}
 
+	public class MyProgressWindowSimpleWrapper
+	{
+		MyProgressWindowBase _progressWindow = null;
+
+		// HACK: IDisposable を実装すると便利かもしれない。using ステートメントで使えるようになる。
+
+		/// <summary>
+		/// プログレス ウィンドウを作成・表示する。必ず UI スレッドから呼び出すこと。
+		/// </summary>
+		/// <param name="description">説明テキスト。</param>
+		/// <returns></returns>
+		public bool ShowProgressWindow<TProgressWindow>(string description)
+			where TProgressWindow : MyProgressWindowBase, new()
+		{
+			if (this._progressWindow != null)
+			{
+				return false;
+			}
+			// ひとまず、Indeterminate なプログレス ウィンドウを表示/非表示するだけ。ユーザー操作による中断は不可能。
+			// HACK: もし表示後に進捗率や説明テキストなどを変更したい場合、VM へアクセスする転送プロパティを実装してもよい。
+			// ただし VM を直接返すプロパティは実装しない。
+
+			// モーダル ウィンドウではないが、親（メイン ウィンドウ）はクリック操作できないようにして疑似的にモーダルとする。
+			// HACK: ただし IsHitTestVisible を false にするだけだと、親ウィンドウのアクティブ化はできる（つまりキーボード入力を受け付ける）ので注意。
+			// また、System.Windows.Window.IsEnabled はシステム コマンド ボタン（最小化・最大化・クローズなど）やシステム メニューなど、
+			// タイトル バー (WindowChrome) 機能を無効化するわけではないことに注意。
+			// IsHitTestVisible に関しても同様で、タイトル バーのドラッグやシステム メニューは有効なまま。
+			// MUI4WPF の ModernWindow であれば、自前のシステム コマンド ボタン群の IsEnabled は Window.IsEnabled に影響を受けるので、
+			// システム コマンド ボタン群を経由した操作に関しては対処できるが、システム メニューやショートカット キー経由の操作には対処不能。
+
+			// また、メイン ウィンドウ以外のウィンドウが存在するときのことは想定していない。
+			// 本格的な用途では、きっちり親ウィンドウの制御を行なうか、
+			// あるいはいっそ Window.ShowDialog() でモーダルなプログレス ウィンドウとして表示し、Window.ContentRendered イベントを使うことも検討されたい。
+
+			Application.Current.MainWindow.IsHitTestVisible = false;
+			this._progressWindow = new TProgressWindow();
+			this._progressWindow.Owner = Application.Current.MainWindow;
+			this._progressWindow.Title = Application.Current.MainWindow.Title;
+			this._progressWindow.ProgressViewModel.Description = description;
+			this._progressWindow.ProgressViewModel.IsIndeterminate = true;
+			this._progressWindow.IsStopButtonVisible = false;
+			this._progressWindow.Show();
+			return true;
+		}
+
+		/// <summary>
+		/// プログレス ウィンドウをクローズする。必ず UI スレッドから呼び出すこと。
+		/// </summary>
+		public void HideProgressWindow()
+		{
+			if (this._progressWindow != null)
+			{
+				this._progressWindow.EnforcedClose();
+				this._progressWindow = null;
+			}
+			Application.Current.MainWindow.IsHitTestVisible = true;
+		}
+	}
 
 	public class MyProgressViewModel : MyBindingHelpers.MyNotifyPropertyChangedBase
 	{
