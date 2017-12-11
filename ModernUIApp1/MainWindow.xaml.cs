@@ -24,7 +24,7 @@ using System.Windows.Shapes;
 // しかし、このプロジェクト テンプレートを使って作成した場合、*.csproj に以下のタグが欠如しているために、
 // プロジェクトに Visual Studio のウィザードで WPF のウィンドウやリソース ディクショナリなどを追加することができない。
 // <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-// *.csproj の手動修正が必要。
+// 解消するためには *.csproj の手動修正が必要。
 
 namespace ModernUIApp1
 {
@@ -66,7 +66,7 @@ namespace ModernUIApp1
 			//this.customWinProc.MinWindowHeight = Double.IsNaN(this.MinHeight) ? 0 : (int)this.MinHeight;
 
 			// HACK: 起動直後に1回だけ設定するので、システム設定やユーザー設定の変更に追従するわけではない。
-			MyWpfHelpers.MyWpfWindowHelper.ClampWindowSizeByDesktopWorkArea(this);
+			MyWpfHelpers.MyWpfControlHelper.ClampWindowSizeByPrimaryDesktopWorkArea(this);
 
 			// 前回終了時にユーザー設定ファイルに保存しておいたテーマ情報を初期値として与える場合はこのタイミングがよさげ。
 			LoadThemeColorSettings();

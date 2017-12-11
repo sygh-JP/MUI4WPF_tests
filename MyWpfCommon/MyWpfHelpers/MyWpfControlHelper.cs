@@ -322,7 +322,9 @@ namespace MyWpfHelpers
 			return false;
 		}
 
-		// Single.NaN or Double.NaN を int にキャストすると、Int32.MinValue になってしまうので要注意。
+		// WPF が扱うピクセルは、（高 DPI 環境にも容易に対応できるように）論理ピクセルとなっている。
+		// Window のサイズはキリのいい数値とはかぎらないが、整数として切り捨てた値をやりとりする方法も用意しておく。
+		// ただし Single.NaN or Double.NaN を int にキャストすると、Int32.MinValue になってしまうので要注意。
 
 		public static System.Windows.Int32Rect GetWindowBoundsAsInt32Rect(Window window)
 		{
@@ -363,13 +365,40 @@ namespace MyWpfHelpers
 			{
 				window.Show();
 			}
-			else if (window.WindowState == WindowState.Minimized)
+			else if (window.WindowState == System.Windows.WindowState.Minimized)
 			{
-				SystemCommands.RestoreWindow(window);
+				System.Windows.SystemCommands.RestoreWindow(window);
 			}
 			else
 			{
 				window.Activate();
+			}
+		}
+
+		public static void RestoreWindowIfMinimized(Window window)
+		{
+			// ウィンドウが最小化されていたら復元する。ただし、WindowState を Normal に戻すだけではダメ。
+			// 最大化された状態で最小化されていた場合に対処できない。
+			if (window.WindowState == System.Windows.WindowState.Minimized)
+			{
+				// わざわざ HWND を取得して P/Invoke を使う必要はない。WPF にユーティリティが用意されている。
+				//var hwnd = (System.Windows.Interop.HwndSource.FromVisual(window) as System.Windows.Interop.HwndSource).Handle;
+				//var hwnd = new System.Windows.Interop.WindowInteropHelper(window).Handle;
+				//MyMiscHelpers.User32DllMethodsInvoker.ShowWindow(hwnd, MyMiscHelpers.User32DllMethodsInvoker.CommandOfShowWindow.SW_RESTORE);
+				System.Windows.SystemCommands.RestoreWindow(window);
+			}
+		}
+
+		public static void ClampWindowSizeByPrimaryDesktopWorkArea(Window window)
+		{
+			var workAreaRect = System.Windows.SystemParameters.WorkArea;
+			if (workAreaRect.Width < window.Width)
+			{
+				window.Width = workAreaRect.Width;
+			}
+			if (workAreaRect.Height < window.Height)
+			{
+				window.Height = workAreaRect.Height;
 			}
 		}
 	}
