@@ -173,7 +173,7 @@ namespace MyWpfHelpers
 		private static Window GetActiveOrMainWindow()
 		{
 			var activeWnd = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
-			return activeWnd != null ? activeWnd : Application.Current.MainWindow;
+			return activeWnd ?? Application.Current.MainWindow;
 		}
 
 		/// <summary>
@@ -189,10 +189,16 @@ namespace MyWpfHelpers
 		public static MessageBoxResult ShowMessage(string text, string title, MessageBoxButton button, MessageBoxImage image = MessageBoxImage.None, int defaultButton = 0, List<string> buttonTexts = null)
 		{
 			// System.Windows.Application.MainWindow プロパティや System.Windows.Application.Windows プロパティはメインスレッドからのみ使用できる。
-			// NOTE: WPF 標準の MessageBox.Show() のように、サブスレッドから直接呼び出せるようにするためには、Dispatcher を経由する必要がある。
+			// NOTE: WPF 標準の System.Windows.MessageBox.Show() のように、サブスレッドから直接呼び出せるようにするためには、Dispatcher を経由する必要がある。
 			// HACK: メッセージ ボックスを表示している間はサブスレッドの実行が一時停止するのは同じだが、Owner が暗黙的に指定されることで主従・前後関係が発生し、
-			// また ShowDialog() が使われるので、モードレスではなくモーダルになる。
+			// また Window.ShowDialog() が使われるので、モードレスではなくモーダルになる。
 			// Owner を明示的に null にして、ShowInTaskbar を true にすれば、主従・前後関係は解消されるが、モードレスにはならない。
+			// モードレスにするためには Window.Show() を使わなければならないが、そうするとダイアログのユーザー選択結果を受け取れなくなる。
+
+			// なお、WPF アプリが非アクティブな状態で MessageBox.Show(string messageBoxText, ...) を実行すると、モードレスになってしまう模様。仕様なのかバグなのかは不明。
+			// この挙動はマルチ タスクにおける不確定性をもたらすため、好ましくない。
+			// 回避するためには、アプリ内の特定ウィンドウをアクティブにしてから呼び出すか、あるいは MessageBox.Show(Window owner, ...) を使い、明示的に WPF オーナーウィンドウを指定する。
+			// 独自ダイアログ表示処理では不確定な挙動を模倣しないことにする。既定動作として、アクティブ ウィンドウがなければ、メイン ウィンドウを使うようにする。
 
 			var dispatcher = Application.Current.Dispatcher;
 			if (dispatcher.CheckAccess())
