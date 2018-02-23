@@ -72,6 +72,11 @@ namespace ModernUIApp1.Pages
 			this.mbutton1.Click += (s, e) =>
 			{
 				// WPF 標準のメッセージ ボックス。CenterOwner でなく CenterScreen となる。
+				// Win32 API の MessageBox() と同じだが、どうも単に P/Invoke しているだけらしい。
+				// MFC の AfxMessageBox() は Center of Owner になるので、MFC に慣れていると違和感がある。
+				// また、MessageBox.Show(string, ...) は、表示前に WPF アプリを非アクティブにすると、モードレスになってしまうという問題がある。
+				// MessageBox.Show(Window, ...) を使ってオーナーを明示的に指定すれば回避できる。
+				// 原則的にオーナーウィンドウを受け取るオーバーロードのほうを常に使用するべきだが、面倒。
 				var ret = MessageBox.Show("test日本語テストα", "title", MessageBoxButton.YesNo);
 				System.Diagnostics.Debug.WriteLine(ret);
 			};
@@ -87,6 +92,7 @@ namespace ModernUIApp1.Pages
 				// [mm] [ms] [sec] などのようにテキスト中で単位を表記したりしたい場合に BBCode ごと消えてしまうので困るが……
 				// とりあえず幅なしスペース U+200B やピリオド U+002E で回避する方法がある。
 				// 1つでも BBCode の解析が失敗するような要素があれば、他のすべての BBCode もそのまま印字されるようになるらしい。
+				// FirstFloor.ModernUI.Windows.Controls.BBCode.ParseException が内部的にスローされるが、呼び出し側には伝播しない。
 				// HACK: BBCodeBlock の代わりに通常の TextBlock を使用するオプションをメソッドに付けられるとよい。というか BBCodeBlock をオプションとしたほうがよい。
 				ret = ModernDialog.ShowMessage("test日本語テストα [b]Bold[/b]", "title", MessageBoxButton.OK);
 				System.Diagnostics.Debug.WriteLine(ret);
