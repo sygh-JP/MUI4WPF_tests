@@ -157,6 +157,12 @@ namespace ModernUIApp1.Pages
 				// もしくは、モードレスで対処。
 				progWnd.ShowDialog();
 				var dlgResult = progWnd.UserDialogResult;
+				// C# 6.0 の ?. 演算子を使えば簡潔に書けるが、古いコンパイラでもコンパイルできるようにあえて冗長な書き方をする。
+				var mainWnd = Application.Current.MainWindow as MainWindow;
+				if (mainWnd != null)
+				{
+					mainWnd.FlashTaskbarButtonIfNotActive();
+				}
 				MyWpfHelpers.MyModernDialogHack.ShowMessage("DialogResult = " + MyMiscHelpers.MyGenericsHelper.ConvertToLiteralNullIfNull(dlgResult), null);
 			};
 			this.button5.Click += async (s, e) =>
@@ -225,8 +231,10 @@ namespace ModernUIApp1.Pages
 				await Task.Delay(2000); // 別のサブスレッドが指定時間スリープし終えた後、このサブスレッドの処理が続行される。
 				this.InvokeHideProgressWindow();
 				// WPF 標準の MessageBox はサブスレッドからでも直接 Show() できる。ただしモーダルではなくモードレスになる。Win32 API と同じ。
+				// サブスレッドの後続処理はダイアログが閉じられるまで一時停止する。
 				// MUI4WPF オリジナルの ModernDialog では Dispatcher が必要。面倒なので Hack したほうがよい。
-				MessageBox.Show("from subthread", "title");
+				var ret = MessageBox.Show("from subthread", "title");
+				System.Diagnostics.Debug.WriteLine(ret);
 #if false
 				this.Dispatcher.Invoke(() =>
 				{

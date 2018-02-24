@@ -77,6 +77,14 @@ namespace ModernUIApp1
 			return new System.Windows.Interop.WindowInteropHelper(this).Handle;
 		}
 
+		public void FlashTaskbarButtonIfNotActive()
+		{
+			if (!this.IsActive)
+			{
+				MyMiscHelpers.MyWin32InteropHelper.FlashWindowEx(this.GetWindowHandle(), MyMiscHelpers.User32DllMethodsInvoker.FlashWindowMode.FLASHW_TRAY, 3);
+			}
+		}
+
 		static void LoadThemeColorSettings()
 		{
 			try
