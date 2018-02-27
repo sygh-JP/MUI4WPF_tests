@@ -199,6 +199,7 @@ namespace MyWpfHelpers
 			// この挙動はマルチ タスクにおける不確定性をもたらすため、好ましくない。
 			// 回避するためには、アプリ内の特定ウィンドウをアクティブにしてから呼び出すか、あるいは MessageBox.Show(Window owner, ...) を使い、明示的に WPF オーナーウィンドウを指定する。
 			// 独自ダイアログ表示処理では不確定な挙動を模倣しないことにする。既定動作として、アクティブ ウィンドウがなければ、メイン ウィンドウを使うようにする。
+			// UserControl からダイアログを表示する場合は、Application.Current.MainWindow よりも Window.GetWindow(DependencyObject) をオーナーに使うとよい。
 
 			var dispatcher = Application.Current.Dispatcher;
 			if (dispatcher.CheckAccess())

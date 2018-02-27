@@ -72,19 +72,6 @@ namespace ModernUIApp1
 			LoadThemeColorSettings();
 		}
 
-		IntPtr GetWindowHandle()
-		{
-			return new System.Windows.Interop.WindowInteropHelper(this).Handle;
-		}
-
-		public void FlashTaskbarButtonIfNotActive()
-		{
-			if (!this.IsActive)
-			{
-				MyMiscHelpers.MyWin32InteropHelper.FlashWindowEx(this.GetWindowHandle(), MyMiscHelpers.User32DllMethodsInvoker.FlashWindowMode.FLASHW_TRAY, 3);
-			}
-		}
-
 		static void LoadThemeColorSettings()
 		{
 			try
@@ -239,5 +226,21 @@ namespace ModernUIApp1
 			return IntPtr.Zero;
 		}
 #endif
+	}
+}
+
+static class MyWindowMethodExtensionPoint
+{
+	public static IntPtr GetWindowHandle(this Window obj)
+	{
+		return new System.Windows.Interop.WindowInteropHelper(obj).Handle;
+	}
+
+	public static void FlashTaskbarButtonIfNotActive(this Window obj)
+	{
+		if (!obj.IsActive)
+		{
+			MyMiscHelpers.MyWin32InteropHelper.FlashWindowEx(obj.GetWindowHandle(), MyMiscHelpers.User32DllMethodsInvoker.FlashWindowMode.FLASHW_TRAY, 3);
+		}
 	}
 }

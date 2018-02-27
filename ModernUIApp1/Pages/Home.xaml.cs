@@ -98,7 +98,7 @@ namespace ModernUIApp1.Pages
 				System.Diagnostics.Debug.WriteLine(ret);
 				ModernDialog.ShowMessage("0.013[sec], 333[m], 42.195[km]", "title", MessageBoxButton.OK);
 				ModernDialog.ShowMessage("0.013[sec.], 333[m], 42.195[km]", "title", MessageBoxButton.OK);
-				ModernDialog.ShowMessage(String.Format("0.013[{0}sec], 333[m], 42.195[km]", (char)0x200b), "title", MessageBoxButton.OK);
+				ModernDialog.ShowMessage(string.Format("0.013[{0}sec], 333[m], 42.195[km]", (char)0x200b), "title", MessageBoxButton.OK);
 				// 縦に長すぎると表示しきれない。
 				ModernDialog.ShowMessage(Poem.AmenimoMakezuText, Poem.AmenimoMakezuTitle, MessageBoxButton.OK);
 				ModernDialog.ShowMessage(Poem.Flatten(Poem.AmenimoMakezuText), Poem.AmenimoMakezuTitle, MessageBoxButton.OK);
@@ -158,7 +158,7 @@ namespace ModernUIApp1.Pages
 				progWnd.ShowDialog();
 				var dlgResult = progWnd.UserDialogResult;
 				// C# 6.0 の ?. 演算子を使えば簡潔に書けるが、古いコンパイラでもコンパイルできるようにあえて冗長な書き方をする。
-				var mainWnd = Application.Current.MainWindow as MainWindow;
+				var mainWnd = Application.Current.MainWindow;
 				if (mainWnd != null)
 				{
 					mainWnd.FlashTaskbarButtonIfNotActive();
