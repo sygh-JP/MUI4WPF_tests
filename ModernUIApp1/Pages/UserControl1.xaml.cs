@@ -69,7 +69,7 @@ namespace ModernUIApp1.Pages
 			// ちなみに、ここでメッセージボックスを表示している間、メインウィンドウ上には Indeterminate のプログレスバーが
 			// 勝手に表示されるようになっている。
 
-			// HACK: Look&Feel を統一するため、メッセージボックスを表示したときに、アイコン種別に応じて警告音なども再生したほうがよい。
+			// HACK: Look & Feel を統一するため、メッセージボックスを表示したときに、アイコン種別に応じて警告音なども再生したほうがよい。
 #if false
 			MyWpfHelpers.MyModernDialogHack.ShowMessage("FirstFloor.ModernUI.Windows.IContent.OnNavigatedTo", null);
 #endif
@@ -114,7 +114,7 @@ namespace ModernUIApp1.Pages
 						}
 					});
 
-					var dpiScaleFactor = MyMiscHelpers.MyVisualUtility.GetDpiScaleFactor(this);
+					var dpiScaleFactor = MyMiscHelpers.MyVisualHelper.GetDpiScaleFactor(this);
 					// 高 DPI 環境でもラスター画像だけは dot-by-dot で表示するため、画像サイズ（デバイス ピクセル）を論理ピクセルに変換する。
 					// BitmapSource.Width, BitmapSource.Height は使わない。
 					this.image1.Width = srcImage.PixelWidth / dpiScaleFactor.X;
